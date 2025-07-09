@@ -6,8 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LoginForm } from "./auth/loginForm";
-import { RegisterForm } from "./auth/registerForm";
+import { LoginForm } from "./login/loginForm";
+import { RegisterForm } from "./register/registerForm";
 
 interface AuthPageProps extends React.HTMLAttributes<HTMLDivElement> {
   data: {

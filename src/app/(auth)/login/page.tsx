@@ -1,4 +1,4 @@
-import { AuthPage } from "@/components/authPage";
+import { AuthPage } from "@/components/features/auth/authPage";
 
 export default function Page() {
   const data = {

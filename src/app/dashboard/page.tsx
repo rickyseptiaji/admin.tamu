@@ -1,16 +1,16 @@
-import { AppSidebar } from "@/components/features/dashboard/app-sidebar"
-import { ChartAreaInteractive } from "@/components/features/dashboard/chart-area-interactive"
-import { DataTable } from "@/components/features/dashboard/data-table"
-import { SectionCards } from "@/components/features/dashboard/section-cards"
-import { SiteHeader } from "@/components/features/dashboard/site-header"
+import { AppSidebar } from "@/components/features/shared/app-sidebar"
+import { ChartAreaInteractive } from "@/components/features/shared/chart-area-interactive"
+import { SectionCards } from "@/components/features/shared/section-cards"
+import { SiteHeader } from "@/components/features/shared/site-header"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
-import data from "./data.json"
+
 
 export default function Page() {
+  // This is the main dashboard page
   return (
     <SidebarProvider
       style={
@@ -22,7 +22,7 @@ export default function Page() {
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader title="Dashboard" />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -30,7 +30,6 @@ export default function Page() {
               <div className="px-4 lg:px-6">
                 <ChartAreaInteractive />
               </div>
-              <DataTable data={data} />
             </div>
           </div>
         </div>

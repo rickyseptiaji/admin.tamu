@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp, getDocs } from "firebase/firestore";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -33,6 +33,32 @@ export async function POST(req: NextRequest) {
     console.error("Error creating division:", error);
     return new Response(
       JSON.stringify({ error: "Failed to create division" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
+
+
+
+ export async function GET() {
+  try {
+    const divisionsSnapshot = await getDocs(collection(db, "divisions"));
+    const divisions = divisionsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return new Response(JSON.stringify(divisions), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error fetching divisions:", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch divisions" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

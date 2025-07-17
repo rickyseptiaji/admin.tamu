@@ -57,12 +57,13 @@ import {
 } from "@tabler/icons-react"
 import { Label } from "@/components/ui/label"
 import { DraggableRow } from "../shared/data-table"
-
+import { useRouter } from "next/navigation"
 interface EmployeeTableProps {
   data: any[]
 }
 
 export function EmployeeTable({ data }: EmployeeTableProps) {
+  const router = useRouter()
   const [tableData, setTableData] = React.useState<any[]>(data)
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -113,12 +114,15 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
       })
     }
   }
+  const   handleAddEmployee = () => {
+    router.push("/employee/create-employee")
+  }
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleAddEmployee}>
             <IconPlus />
             <span className="hidden lg:inline">Add Employee</span>
           </Button>

@@ -6,15 +6,23 @@ export const employeeColumns: ColumnDef<any>[] = [
     header: "ID",
   },
   {
-    accessorKey: "name",
+    accessorKey: "fullName",
     header: "Employee Name",
   },
   {
-    accessorKey: "position",
-    header: "Position",
+    accessorKey: "email",
+    header: "Email",
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "division",
+    header: "Division",
+  },
+  {
+    accessorKey: "phone",
+    header: "Phone",
+  },
+  {
+    accessorKey: "address",
+    header: "Address",
   },
 ]

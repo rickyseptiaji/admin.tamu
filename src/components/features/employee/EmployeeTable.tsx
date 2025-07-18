@@ -16,7 +16,7 @@ import {
   type PaginationState,
 } from "@tanstack/react-table"
 import { employeeColumns } from "./columns"
-import React from "react"
+import React, { useEffect } from "react"
 import {
   closestCenter,
   DndContext,
@@ -58,14 +58,9 @@ import {
 import { Label } from "@/components/ui/label"
 import { DraggableRow } from "../shared/data-table"
 import { useRouter } from "next/navigation"
-interface EmployeeTableProps {
-  data: any[]
-}
 
-export function EmployeeTable({ data }: EmployeeTableProps) {
+export function EmployeeTable() {
   const router = useRouter()
-  const [tableData, setTableData] = React.useState<any[]>(data)
-
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
@@ -74,7 +69,22 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
     pageIndex: 0,
     pageSize: 10,
   })
-
+  const [tableData, setTableData] = React.useState<any[]>([])
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/employee")
+        if (!response.ok) {
+          throw new Error("Failed to fetch employee data")
+        }
+        const data = await response.json()
+        setTableData(data)
+      } catch (error) {
+        console.error("Error fetching employee data:", error)
+      }
+    }
+    fetchData()
+  }, [])
   const table = useReactTable({
     data: tableData,
     columns: employeeColumns,
@@ -114,6 +124,7 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
       })
     }
   }
+
   const   handleAddEmployee = () => {
     router.push("/employee/create-employee")
   }

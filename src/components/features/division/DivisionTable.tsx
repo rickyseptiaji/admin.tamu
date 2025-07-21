@@ -126,7 +126,7 @@ export function DivisionTable() {
   }
 
   const handleAddEmployee = () => {
-    router.push("/employee/create-employee")
+    router.push("/division/create-division")
   }
 
   return (
@@ -135,7 +135,7 @@ export function DivisionTable() {
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleAddEmployee}>
             <IconPlus />
-            <span className="hidden lg:inline">Add Employee</span>
+            <span className="hidden lg:inline">Add Division</span>
           </Button>
         </div>
       </div>

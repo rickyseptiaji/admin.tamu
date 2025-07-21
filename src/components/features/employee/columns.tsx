@@ -1,4 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
+import { TableActions } from "../shared/TableActions"
+
 
 export const employeeColumns: ColumnDef<any>[] = [
   {
@@ -24,5 +26,16 @@ export const employeeColumns: ColumnDef<any>[] = [
   {
     accessorKey: "address",
     header: "Address",
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <TableActions
+        id={row.original.id}
+        editPath="/employee/edit"
+        onDelete={(id) => console.log(`Delete employee with ID: ${id}`)}
+      />
+    ),
   },
 ]

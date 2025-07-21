@@ -15,39 +15,53 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import { useEffect } from "react";
 const FormSchema = z.object({
-  division: z.string().min(2, {
+  name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
 });
-export default function CreateDivision() {
+export default function EditDivision() {
   const router = useRouter();
+  const params = useParams();
+  const divisionId = params.id as string;
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      division: "",
+      name: "",
     },
   });
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const { division } = data;
-      await fetch("/api/division", {
-        method: "POST",
+      const { name } = data;
+      await fetch(`/api/division/${divisionId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: division }),
+        body: JSON.stringify({ name }),
       });
 
       router.push("/division");
     } catch (error) {
-      console.error("Failed to create division:", error);
+      console.error("Failed to update division:", error);
     }
-    toast.success("Division created successfully!");
+    toast.success("Division updated successfully!");
   }
+
+  useEffect(() => {
+    async function fetchDivision() {
+      const response = await fetch(`/api/division/${divisionId}`);
+      const result = await response.json();
+      const data = result[0];
+      form.reset(data);
+    }
+    fetchDivision();
+  }, [divisionId, form]);
+
   return (
-    <MainLayout title="Create Division">
+    <MainLayout title="Edit Division">
       <div className="px-4">
         <div className="grid w-full max-w-sm items-center gap-3">
           <Form {...form}>
@@ -57,7 +71,7 @@ export default function CreateDivision() {
             >
               <FormField
                 control={form.control}
-                name="division"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Division</FormLabel>
@@ -68,7 +82,7 @@ export default function CreateDivision() {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <Button type="submit">Update Division</Button>
             </form>
           </Form>
         </div>

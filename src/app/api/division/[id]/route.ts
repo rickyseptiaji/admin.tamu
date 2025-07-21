@@ -3,14 +3,12 @@ import { collection, doc, getDocs, serverTimestamp, updateDoc } from "@firebase/
 import { NextRequest } from "next/server";
 
 export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+req: Request, context: { params: { id: string } }
 ) {
-  const divisionId = params.id;
-  console.log("Updating division with ID:", divisionId);
+  const { id } = context.params;
   try {
     const body = await req.json();
-    console.log("Updating division with ID:", divisionId, "Data:", body);
+    console.log("Updating division with ID:", id, "Data:", body);
     const { name } = body;
 
     if (!name || typeof name !== "string") {
@@ -23,7 +21,7 @@ export async function PUT(
       );
     }
 
-    const divisionRef = doc(db, "divisions", divisionId);
+    const divisionRef = doc(db, "divisions", id);
     await updateDoc(divisionRef, {
       name,
       updatedAt: serverTimestamp(),

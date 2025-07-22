@@ -34,7 +34,7 @@ export const employeeColumns: ColumnDef<any>[] = [
       <TableActions
         id={row.original.id}
         editPath="/employee/edit"
-        onDelete={(id) => console.log(`Delete employee with ID: ${id}`)}
+        deletePath="/employee"
       />
     ),
   },

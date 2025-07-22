@@ -72,8 +72,9 @@ export async function GET(req: NextRequest) {
 export async function DELETE(
   req: NextRequest
 ) {
-    const url = new URL(req.url);
-const id = url.pathname.split("/").pop() ?? "";
+const pathParts = req.nextUrl.pathname.split("/");
+const id = pathParts[pathParts.length - 1] ?? "";
+
 if (!id) {
   return new Response(JSON.stringify({ error: "ID is required" }), {
     status: 400,

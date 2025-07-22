@@ -69,19 +69,15 @@ export async function GET(req: NextRequest) {
   }
 }   
 
-export async function DELETE(
-  req: NextRequest
-) {
-const pathParts = req.nextUrl.pathname.split("/");
-const id = pathParts[pathParts.length - 1] ?? "";
+export async function DELETE(req: NextRequest) {
+  const id = req.nextUrl.pathname.split("/").pop();
 
-if (!id) {
-  return new Response(JSON.stringify({ error: "ID is required" }), {
-    status: 400,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
+  if (!id || typeof id !== "string") {
+    return new Response(JSON.stringify({ error: "Invalid ID" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const divisionRef = doc(db, "divisions", id);
@@ -106,4 +102,4 @@ if (!id) {
       }
     );
   }
-} 
+}

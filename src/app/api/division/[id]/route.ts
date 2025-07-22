@@ -1,14 +1,20 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, serverTimestamp, updateDoc } from "@firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+} from "@firebase/firestore";
 import { NextRequest } from "next/server";
 
 export async function PUT(
-req: Request, context: { params: { id: string } }
+  req: Request,
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params;
+  const { id } = params;
   try {
     const body = await req.json();
-    console.log("Updating division with ID:", id, "Data:", body);
     const { name } = body;
 
     if (!name || typeof name !== "string") {
@@ -67,16 +73,16 @@ export async function GET(req: NextRequest) {
       }
     );
   }
-}   
+}
 
 export async function DELETE(
-  req: NextRequest,
+  req: Request,
   { params }: { params: { id: string } }
 ) {
-  const divisionId = params.id;
+  const { id } = params;
 
   try {
-    const divisionRef = doc(db, "divisions", divisionId);
+    const divisionRef = doc(db, "divisions", id);
     await updateDoc(divisionRef, {
       deletedAt: serverTimestamp(),
     });
@@ -98,4 +104,4 @@ export async function DELETE(
       }
     );
   }
-} 
+}

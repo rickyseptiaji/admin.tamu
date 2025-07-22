@@ -70,13 +70,10 @@ export async function GET(req: NextRequest) {
 }   
 
 export async function DELETE(req: NextRequest) {
+  const id = req.nextUrl.pathname.split("/").pop();
 
-  const url = new URL(req.url);
-  const segments = url.pathname.split("/");
-  const id = segments[segments.length - 1] ?? "";
-
-  if (!id) {
-    return new Response(JSON.stringify({ error: "ID is required" }), {
+  if (!id || typeof id !== "string") {
+    return new Response(JSON.stringify({ error: "Invalid ID" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });

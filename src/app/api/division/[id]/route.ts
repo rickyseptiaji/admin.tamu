@@ -70,17 +70,20 @@ export async function GET(req: NextRequest) {
 }   
 
 export async function DELETE(req: NextRequest) {
-  const id = req.nextUrl.pathname.split("/").pop();
 
-  if (!id || typeof id !== "string") {
-    return new Response(JSON.stringify({ error: "Invalid ID" }), {
+  const url = new URL(req.url);
+  const segments = url.pathname.split("/");
+  const id = segments[segments.length - 1] ?? "";
+
+  if (!id) {
+    return new Response(JSON.stringify({ error: "ID is required" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });
   }
 
   try {
-    const divisionRef = doc(db, "divisions", id);
+    const divisionRef = doc(db, "divisions", id as string);
     await updateDoc(divisionRef, {
       deletedAt: serverTimestamp(),
     });

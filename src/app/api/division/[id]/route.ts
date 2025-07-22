@@ -73,13 +73,14 @@ export async function DELETE(
   req: NextRequest
 ) {
     const url = new URL(req.url);
-    const id = url.pathname.split("/").pop()
-  if (!id) {
-    return new Response(JSON.stringify({ error: "ID is required" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+const id = url.pathname.split("/").pop() ?? "";
+if (!id) {
+  return new Response(JSON.stringify({ error: "ID is required" }), {
+    status: 400,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 
   try {
     const divisionRef = doc(db, "divisions", id);

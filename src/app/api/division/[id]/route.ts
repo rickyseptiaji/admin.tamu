@@ -10,9 +10,9 @@ import { NextRequest } from "next/server";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const { id } = context.params;
 
   try {
     const body = await req.json();
@@ -53,6 +53,7 @@ export async function PUT(
   }
 }
 
+
 export async function GET(req: NextRequest) {
   try {
     const divisionsSnapshot = await getDocs(collection(db, "divisions"));
@@ -78,9 +79,10 @@ export async function GET(req: NextRequest) {
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const id = context.params.id;
+
   try {
     const divisionRef = doc(db, "divisions", id);
     await updateDoc(divisionRef, {

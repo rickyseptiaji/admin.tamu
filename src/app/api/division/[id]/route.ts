@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, serverTimestamp, updateDoc } from "@firebase/firestore";
+import { collection, doc, getDocs, serverTimestamp, updateDoc } from "firebase/firestore";
 import { NextRequest } from "next/server";
 
 export async function PUT(req: NextRequest

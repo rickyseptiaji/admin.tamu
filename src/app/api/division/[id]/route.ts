@@ -5,7 +5,7 @@ import {
   getDocs,
   serverTimestamp,
   updateDoc,
-} from "@firebase/firestore";
+} from "firebase/firestore";
 import { NextRequest } from "next/server";
 
 export async function PUT(
@@ -13,6 +13,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
+
   try {
     const body = await req.json();
     const { name } = body;

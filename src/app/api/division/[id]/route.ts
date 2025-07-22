@@ -81,7 +81,6 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-
   try {
     const divisionRef = doc(db, "divisions", id);
     await updateDoc(divisionRef, {

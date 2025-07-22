@@ -70,10 +70,10 @@ export async function GET(req: NextRequest) {
 }   
 
 export async function DELETE(req: NextRequest) {
-const id = req.nextUrl.pathname.split("/").pop() ?? "";
+  const id = req.nextUrl.pathname.split("/").pop();
 
- if (!id) {
-    return new Response(JSON.stringify({ error: "Invalid ID" }), {
+  if (!id || typeof id !== "string") {
+    return new Response(JSON.stringify({ error: "Invalid division ID" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });

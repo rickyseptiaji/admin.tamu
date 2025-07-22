@@ -3,8 +3,7 @@ import { collection, doc, getDocs, serverTimestamp, updateDoc } from "@firebase/
 import { NextRequest } from "next/server";
 
 export async function PUT(
-  request: NextRequest,
-  context: { params: { id: string } }
+request: NextRequest, context: { params: Record<string, string> }
 ) {
   const { id } = context.params;
   try {

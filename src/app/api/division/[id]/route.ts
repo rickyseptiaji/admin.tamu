@@ -2,10 +2,10 @@ import { db } from "@/lib/firebase";
 import { collection, doc, getDocs, serverTimestamp, updateDoc } from "@firebase/firestore";
 import { NextRequest } from "next/server";
 
-export async function PUT(
-request: NextRequest, context: { params: Record<string, string> }
+export async function PUT(req: NextRequest
 ) {
-  const { id } = context.params;
+  const url = req.nextUrl
+  const id = url.pathname.split('/').pop() 
   try {
     const body = await req.json();
     console.log("Updating division with ID:", id, "Data:", body);

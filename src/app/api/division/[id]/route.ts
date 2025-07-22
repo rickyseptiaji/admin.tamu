@@ -70,11 +70,10 @@ export async function GET(req: NextRequest) {
 }   
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest
 ) {
-  const divisionId = params.id;
-
+    const url = new URL(req.url);
+    const divisionId = url.pathname.split("/").pop()
   try {
     const divisionRef = doc(db, "divisions", divisionId);
     await updateDoc(divisionRef, {

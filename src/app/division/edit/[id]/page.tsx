@@ -46,7 +46,7 @@ export default function EditDivision() {
       router.push("/division");
     } catch (error) {
       console.error("Failed to update division:", error);
-    }
+    } 
     toast.success("Division updated successfully!");
   }
 

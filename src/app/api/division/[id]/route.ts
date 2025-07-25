@@ -2,6 +2,7 @@ import { db } from "@/lib/firebase";
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   serverTimestamp,
   updateDoc,
@@ -44,19 +45,25 @@ export async function PUT(
 
 
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   try {
-    const divisionsSnapshot = await getDocs(collection(db, "divisions"));
-    const divisions = divisionsSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return new Response(JSON.stringify(divisions), {
+    const docRef = doc(db, "divisions", id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      return new Response(JSON.stringify({ error: "Divisions not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response(JSON.stringify({ id: docSnap.id, ...docSnap.data() }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching divisions:", error);
     return new Response(
       JSON.stringify({ error: "Failed to fetch divisions" }),
       {
@@ -66,6 +73,7 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 
 export async function DELETE(
   request: Request,

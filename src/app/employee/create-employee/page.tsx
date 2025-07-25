@@ -1,6 +1,6 @@
 "use client";
 
-import CreateEmployeeForm from "@/components/features/employee/create-employee-form";
+import CreateEmployeeForm from "@/components/features/employee/form/create/create-employee-form";
 import { MainLayout } from "@/layout/mainLayout";
 export default function CreateEmployee() {
 

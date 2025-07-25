@@ -1,14 +1,15 @@
 "use client";
 
-import EditDivisionForm from "@/components/features/division/form/edit/edit-division-form";
-import { MainLayout } from "@/layout/mainLayout";
 
-export default function EditDivision() {
+import EditEmployeeForm from "@/components/features/employee/form/edit/edit-employee-form";
+import { MainLayout } from "@/layout/mainLayout";
+export default function EditEmployee() {
+
   return (
-    <MainLayout title="Edit Division">
+    <MainLayout title="Update Employee">
       <div className="px-4">
         <div className="grid w-full max-w-sm items-center gap-3">
-          <EditDivisionForm />
+        <EditEmployeeForm/>
         </div>
       </div>
     </MainLayout>

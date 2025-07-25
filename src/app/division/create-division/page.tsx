@@ -1,7 +1,7 @@
 "use client";
 
 import { MainLayout } from "@/layout/mainLayout";
-import CreateDivisionForm from "@/components/features/division/create-division-form";
+import CreateDivisionForm from "@/components/features/division/form/create/create-division-form";
 
 export default function CreateDivision() {
   return (

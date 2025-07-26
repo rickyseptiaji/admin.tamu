@@ -1,3 +1,4 @@
+import { LoadingSpinner } from "@/components/features/shared/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -38,7 +40,14 @@ const FormSchema = z.object({
     message: "Please select a division.",
   }),
 });
-export default function EditEmployeeForm() {
+export default function EditEmployeeForm({
+  employeeId,
+}: {
+  employeeId: string;
+}) {
+  const router = useRouter();
+
+  const [employee, setEmployee] = useState<any>(null);
   const [division, setDivision] = useState<any[]>([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -51,46 +60,62 @@ export default function EditEmployeeForm() {
     },
   });
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    try {
-      const { fullName, email, phone, address, division } = data;
-      fetch("/api/employee", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ fullName, email, phone, address, division }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          toast.success("Employee created successfully!");
-          form.reset();
-        })
-        .catch((error) => {
-          console.error("Error creating employee:", error);
-          toast.error("Failed to create employee.");
+    async function updateEmployee() {
+      try {
+        const response = await fetch(`/api/employee/${employeeId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to submit form.");
+
+        if (!response.ok) throw new Error("Failed to update employee");
+
+        const updatedEmployee = await response.json();
+        setEmployee(updatedEmployee);
+        router.push("/division");
+        toast.success("Employee updated successfully");
+      } catch (error) {
+        toast.error("Failed to update employee");
+      }
     }
+
+    updateEmployee();
   }
 
   useEffect(() => {
-    async function fetchDivision() {
+    async function fetchData() {
       try {
-        const response = await fetch("/api/division");
-        if (!response.ok) {
-          throw new Error("Failed to fetch divisions");
-        }
-        const data = await response.json();
-        setDivision(data);
+        const [divRes, empRes] = await Promise.all([
+          fetch("/api/division"),
+          fetch(`/api/employee/${employeeId}`),
+        ]);
+
+        if (!divRes.ok || !empRes.ok) throw new Error("Failed to fetch data");
+
+        const divisionData = await divRes.json();
+        const employeeData = await empRes.json();
+        setDivision(divisionData);
+        setEmployee(employeeData);
+
+        form.reset({
+          fullName: employeeData.fullName || "",
+          email: employeeData.email || "",
+          phone: employeeData.phone || "",
+          address: employeeData.address || "",
+          division: employeeData.division || "",
+        });
       } catch (error) {
-        console.error("Error fetching divisions:", error);
+        toast.error("Failed to load data");
       }
     }
-    fetchDivision();
-  }, []);
 
+    fetchData();
+  }, [form, employeeId]);
+  if (!employee || division.length === 0) {
+    return <div><LoadingSpinner/></div>;
+  }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
@@ -171,6 +196,7 @@ export default function EditEmployeeForm() {
             </FormItem>
           )}
         />
+
         <Button type="submit">Submit</Button>
       </form>
     </Form>

@@ -1,3 +1,4 @@
+import { LoadingSpinner } from "@/components/features/shared/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -39,6 +41,7 @@ const FormSchema = z.object({
   }),
 });
 export default function CreateEmployeeForm() {
+  const router = useRouter();
   const [division, setDivision] = useState<any[]>([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -50,27 +53,20 @@ export default function CreateEmployeeForm() {
       division: "",
     },
   });
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const { fullName, email, phone, address, division } = data;
-      fetch("/api/employee", {
+      const response = await fetch("/api/employee", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ fullName, email, phone, address, division }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          toast.success("Employee created successfully!");
-          form.reset();
-        })
-        .catch((error) => {
-          console.error("Error creating employee:", error);
-          toast.error("Failed to create employee.");
-        });
+      });
+      if (!response.ok) throw new Error("Failed to update employee");
+      toast.success("Employee created successfully");
+      router.push("/employee");
     } catch (error) {
-      console.error("Error submitting form:", error);
       toast.error("Failed to submit form.");
     }
   }
@@ -90,7 +86,9 @@ export default function CreateEmployeeForm() {
     }
     fetchDivision();
   }, []);
-
+if (division.length === 0) {
+    return <div><LoadingSpinner/></div>;
+  }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">

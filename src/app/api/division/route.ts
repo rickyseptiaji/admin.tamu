@@ -9,8 +9,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { NextRequest } from "next/server";
-export async function POST(req: NextRequest) {
+
+export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { name } = body;
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       deletedAt: null,
     });
 
+    await updateDoc(docRef, { id: docRef.id });
     return new Response(
       JSON.stringify({ message: "Division created", id: docRef.id }),
       {
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-   const divisionsQuery = query(
+    const divisionsQuery = query(
       collection(db, "divisions"),
       where("deletedAt", "==", null)
     );
@@ -76,6 +77,3 @@ export async function GET() {
     );
   }
 }
-
-
-

@@ -1,3 +1,4 @@
+import { LoadingSpinner } from "@/components/features/shared/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -22,6 +23,7 @@ const FormSchema = z.object({
 export default function EditDivisionForm() {
   const router = useRouter();
   const params = useParams();
+  const [division, setDivision] = useState<any[]>([]);
   const divisionId = params.id as string;
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -39,12 +41,11 @@ export default function EditDivisionForm() {
         },
         body: JSON.stringify({ name }),
       });
-
+      toast.success("Division updated successfully");
       router.push("/division");
     } catch (error) {
       console.error("Failed to update division:", error);
     }
-    toast.success("Division updated successfully!");
   }
 
   useEffect(() => {
@@ -52,10 +53,14 @@ export default function EditDivisionForm() {
       const response = await fetch(`/api/division/${divisionId}`);
       const result = await response.json();
       const data = result[0];
+      setDivision(data);
       form.reset(data);
     }
     fetchDivision();
   }, [divisionId, form]);
+if (!division) {
+    return <div><LoadingSpinner/></div>;
+}
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">

@@ -38,12 +38,12 @@ export default function CreateDivisionForm() {
         },
         body: JSON.stringify({ name: division }),
       });
-
+      toast.success("Division created successfully");
       router.push("/division");
     } catch (error) {
-      console.error("Failed to create division:", error);
+      toast.error("Failed to create division");
     }
-    toast.success("Division created successfully!");
+
   }
   return (
     <Form {...form}>

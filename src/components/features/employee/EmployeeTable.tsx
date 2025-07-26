@@ -58,6 +58,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { DraggableRow } from "../shared/data-table"
 import { useRouter } from "next/navigation"
+import { LoadingSpinner } from "../shared/LoadingSpinner"
 
 export function EmployeeTable() {
   const router = useRouter()
@@ -129,6 +130,13 @@ export function EmployeeTable() {
     router.push("/employee/create-employee")
   }
 
+  if (tableData.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center"> 
+    <LoadingSpinner/>
+      </div>
+    )
+  }
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">

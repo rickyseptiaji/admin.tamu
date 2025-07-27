@@ -43,6 +43,7 @@ const FormSchema = z.object({
 export default function CreateEmployeeForm() {
   const router = useRouter();
   const [division, setDivision] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {

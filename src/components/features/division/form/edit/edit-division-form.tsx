@@ -15,11 +15,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+
 const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
 });
+
 export default function EditDivisionForm() {
   const router = useRouter();
   const params = useParams();

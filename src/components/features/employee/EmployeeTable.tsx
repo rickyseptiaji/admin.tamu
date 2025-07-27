@@ -64,6 +64,7 @@ import { Input } from "@/components/ui/input";
 export function EmployeeTable() {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -103,6 +104,19 @@ export function EmployeeTable() {
       rowSelection,
       columnFilters,
       pagination,
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const value = filterValue.toLowerCase();
+
+      return (
+        row.original.fullName.toLowerCase().includes(value) ||
+        row.original.email.toLowerCase().includes(value) ||
+        row.original.division.toLowerCase().includes(value) ||
+        row.original.phone.toLowerCase().includes(value) ||
+        row.original.address.toLowerCase().includes(value)
+      );
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
@@ -149,7 +163,7 @@ export function EmployeeTable() {
         </div>
       </div>
 
-      {isLoading  && tableData.length === 0 ? (
+      {isLoading && tableData.length === 0 ? (
         <div className="flex h-full items-center justify-center">
           <LoadingSpinner />
         </div>
@@ -166,7 +180,13 @@ export function EmployeeTable() {
               sensors={sensors}
             >
               <div className="flex items-center justify-between p-2">
-                <Input placeholder="Search" className="max-w-sm" />
+                <Input
+                  placeholder="Search"
+                  className="max-w-sm"
+                  value={globalFilter}
+                  onChange={(e) => setGlobalFilter(e.target.value)}
+                />
+
                 <Button>Export</Button>
               </div>
               <Table>

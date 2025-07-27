@@ -104,6 +104,7 @@ export function DivisionTable() {
       columnFilters,
       pagination,
     },
+
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -166,7 +167,16 @@ export function DivisionTable() {
               sensors={sensors}
             >
               <div className="flex items-center justify-between p-2">
-                <Input placeholder="Search" className="max-w-sm" />
+                <Input
+                  placeholder="Search"
+                  className="max-w-sm"
+                  value={
+                    (table.getColumn("name")?.getFilterValue() as string) ?? ""
+                  }
+                  onChange={(e) => {
+                    table.getColumn("name")?.setFilterValue(e.target.value);
+                  }}
+                />
                 <Button>Export</Button>
               </div>
 

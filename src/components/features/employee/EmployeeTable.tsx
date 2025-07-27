@@ -149,7 +149,7 @@ export function EmployeeTable() {
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading  && tableData.length === 0 ? (
         <div className="flex h-full items-center justify-center">
           <LoadingSpinner />
         </div>

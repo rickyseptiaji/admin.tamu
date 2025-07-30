@@ -24,8 +24,12 @@ export const employeeColumns: ColumnDef<any>[] = [
     header: "Email",
   },
   {
-    accessorKey: "divisionName",
+    accessorKey: "division",
     header: "Division",
+    cell: ({ row }) => {
+      const division = row.original.division;
+      return division ? division.name : "No Division";
+    },
   },
   {
     accessorKey: "phone",

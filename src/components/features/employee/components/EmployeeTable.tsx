@@ -15,6 +15,7 @@ import {
   type RowSelectionState,
   type PaginationState,
 } from "@tanstack/react-table";
+import { employeeColumns } from "./columns";
 import React, { useEffect } from "react";
 import {
   closestCenter,
@@ -55,15 +56,28 @@ import {
   IconChevronsRight,
 } from "@tabler/icons-react";
 import { Label } from "@/components/ui/label";
-import { DraggableRow } from "../shared/data-table";
+import { DraggableRow } from "../../shared/data-table";
 import { useRouter } from "next/navigation";
-import { divisionColums } from "./columns";
-import { LoadingSpinner } from "../shared/LoadingSpinner";
+import { LoadingSpinner } from "../../shared/LoadingSpinner";
 import { Input } from "@/components/ui/input";
 
-export function DivisionTable() {
+interface EmployeeTableProps {
+  id: string;
+  fullName: string;
+  email: string;
+  division: string;
+  phone: string;
+  address: string;
+}
+
+interface EmployeeTableState {
+  data: EmployeeTableProps[];
+  isLoading: boolean;
+}
+
+export function EmployeeTable({data, isLoading}: EmployeeTableState) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -75,36 +89,30 @@ export function DivisionTable() {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [tableData, setTableData] = React.useState<any[]>([]);
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/division");
-        if (!response.ok) {
-          throw new Error("Failed to fetch employee data");
-        }
-        const data = await response.json();
-        setTableData(data);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+
   const table = useReactTable({
-    data: tableData,
-    columns: divisionColums,
+    data: data,
+    columns: employeeColumns,
     state: {
       sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
       pagination,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const value = filterValue.toLowerCase();
 
+      return (
+        row.original.fullName.toLowerCase().includes(value) ||
+        row.original.email.toLowerCase().includes(value) ||
+        row.original.division.toLowerCase().includes(value) ||
+        row.original.phone.toLowerCase().includes(value) ||
+        row.original.address.toLowerCase().includes(value)
+      );
+    },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -120,23 +128,23 @@ export function DivisionTable() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const dataIds = tableData.map((row) => row.id.toString());
+  const dataIds = data.map((row) => row.id.toString());
 
   const sensors = useSensors(useSensor(PointerSensor));
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setTableData((prevData) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(prevData, oldIndex, newIndex);
-      });
-    }
-  }
+  // function handleDragEnd(event: DragEndEvent) {
+  //   const { active, over } = event;
+  //   if (active && over && active.id !== over.id) {
+  //     setTableData((prevData) => {
+  //       const oldIndex = dataIds.indexOf(active.id);
+  //       const newIndex = dataIds.indexOf(over.id);
+  //       return arrayMove(prevData, oldIndex, newIndex);
+  //     });
+  //   }
+  // }
 
   const handleAddEmployee = () => {
-    router.push("/division/create-division");
+    router.push("/employee/create-employee");
   };
 
   return (
@@ -145,12 +153,12 @@ export function DivisionTable() {
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleAddEmployee}>
             <IconPlus />
-            <span className="hidden lg:inline">Add Division</span>
+            <span className="hidden lg:inline">Add Employee</span>
           </Button>
         </div>
       </div>
 
-      {isLoading && tableData.length === 0 ? (
+      {isLoading && data.length === 0 ? (
         <div className="flex h-full items-center justify-center">
           <LoadingSpinner />
         </div>
@@ -163,23 +171,19 @@ export function DivisionTable() {
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis]}
-              onDragEnd={handleDragEnd}
+              // onDragEnd={handleDragEnd}
               sensors={sensors}
             >
               <div className="flex items-center justify-between p-2">
                 <Input
                   placeholder="Search"
                   className="max-w-sm"
-                  value={
-                    (table.getColumn("name")?.getFilterValue() as string) ?? ""
-                  }
-                  onChange={(e) => {
-                    table.getColumn("name")?.setFilterValue(e.target.value);
-                  }}
+                  value={globalFilter}
+                  onChange={(e) => setGlobalFilter(e.target.value)}
                 />
+
                 <Button>Export</Button>
               </div>
-
               <Table>
                 <TableHeader className="bg-muted sticky top-0 z-10">
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -210,7 +214,7 @@ export function DivisionTable() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={divisionColums.length}
+                        colSpan={employeeColumns.length}
                         className="h-24 text-center"
                       >
                         No results.

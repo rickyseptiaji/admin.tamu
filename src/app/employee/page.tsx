@@ -1,10 +1,5 @@
-import { MainLayout } from "@/layout/mainLayout";
-import { EmployeeTable } from "@/components/features/employee/EmployeeTable";
+import EmployeePage from "@/components/features/employee/page";
 
 export default function Page() {
-  return (
-    <MainLayout title="Create Employee">
-      <EmployeeTable />
-    </MainLayout>
-  );
+  return <EmployeePage />;
 }

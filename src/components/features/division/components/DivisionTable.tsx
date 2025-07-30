@@ -15,7 +15,6 @@ import {
   type RowSelectionState,
   type PaginationState,
 } from "@tanstack/react-table";
-import { employeeColumns } from "./columns";
 import React, { useEffect } from "react";
 import {
   closestCenter,
@@ -56,15 +55,25 @@ import {
   IconChevronsRight,
 } from "@tabler/icons-react";
 import { Label } from "@/components/ui/label";
-import { DraggableRow } from "../shared/data-table";
-import { useRouter } from "next/navigation";
-import { LoadingSpinner } from "../shared/LoadingSpinner";
-import { Input } from "@/components/ui/input";
 
-export function EmployeeTable() {
+import { useRouter } from "next/navigation";
+import { divisionColums } from "./columns";
+
+import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "../../shared/LoadingSpinner";
+import { DraggableRow } from "../../shared/data-table";
+
+interface DivisionTableProps {
+  id: string;
+  name: string;
+}
+interface DivisionTableState {
+  data: DivisionTableProps[];
+  isLoading: boolean;
+}
+
+export function DivisionTable({ data, isLoading }: DivisionTableState) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -76,48 +85,18 @@ export function EmployeeTable() {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [tableData, setTableData] = React.useState<any[]>([]);
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/employee");
-        if (!response.ok) {
-          throw new Error("Failed to fetch employee data");
-        }
-        const data = await response.json();
-        setTableData(data);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+
   const table = useReactTable({
-    data: tableData,
-    columns: employeeColumns,
+    data: data,
+    columns: divisionColums,
     state: {
       sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
       pagination,
-      globalFilter,
     },
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, filterValue) => {
-      const value = filterValue.toLowerCase();
 
-      return (
-        row.original.fullName.toLowerCase().includes(value) ||
-        row.original.email.toLowerCase().includes(value) ||
-        row.original.division.toLowerCase().includes(value) ||
-        row.original.phone.toLowerCase().includes(value) ||
-        row.original.address.toLowerCase().includes(value)
-      );
-    },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -133,23 +112,23 @@ export function EmployeeTable() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const dataIds = tableData.map((row) => row.id.toString());
+  const dataIds = data.map((row) => row.id.toString());
 
   const sensors = useSensors(useSensor(PointerSensor));
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setTableData((prevData) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(prevData, oldIndex, newIndex);
-      });
-    }
-  }
+  // function handleDragEnd(event: DragEndEvent) {
+  //   const { active, over } = event;
+  //   if (active && over && active.id !== over.id) {
+  //     setTableData((prevData) => {
+  //       const oldIndex = dataIds.indexOf(active.id);
+  //       const newIndex = dataIds.indexOf(over.id);
+  //       return arrayMove(prevData, oldIndex, newIndex);
+  //     });
+  //   }
+  // }
 
   const handleAddEmployee = () => {
-    router.push("/employee/create-employee");
+    router.push("/division/create-division");
   };
 
   return (
@@ -158,12 +137,12 @@ export function EmployeeTable() {
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleAddEmployee}>
             <IconPlus />
-            <span className="hidden lg:inline">Add Employee</span>
+            <span className="hidden lg:inline">Add Division</span>
           </Button>
         </div>
       </div>
 
-      {isLoading && tableData.length === 0 ? (
+      {isLoading && data.length === 0 ? (
         <div className="flex h-full items-center justify-center">
           <LoadingSpinner />
         </div>
@@ -176,19 +155,23 @@ export function EmployeeTable() {
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis]}
-              onDragEnd={handleDragEnd}
+              // onDragEnd={handleDragEnd}
               sensors={sensors}
             >
               <div className="flex items-center justify-between p-2">
                 <Input
                   placeholder="Search"
                   className="max-w-sm"
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
+                  value={
+                    (table.getColumn("name")?.getFilterValue() as string) ?? ""
+                  }
+                  onChange={(e) => {
+                    table.getColumn("name")?.setFilterValue(e.target.value);
+                  }}
                 />
-
                 <Button>Export</Button>
               </div>
+
               <Table>
                 <TableHeader className="bg-muted sticky top-0 z-10">
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -219,7 +202,7 @@ export function EmployeeTable() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={employeeColumns.length}
+                        colSpan={divisionColums.length}
                         className="h-24 text-center"
                       >
                         No results.

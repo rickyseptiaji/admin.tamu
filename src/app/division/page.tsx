@@ -1,10 +1,7 @@
-import { MainLayout } from "@/layout/mainLayout";
-import { DivisionTable } from "@/components/features/division/DivisionTable";
+import DivisionPage from "@/components/features/division/page";
 
 export default function Page() {
   return (
-    <MainLayout title="Division">
-      <DivisionTable />
-    </MainLayout>
+    <DivisionPage/>
   );
 }

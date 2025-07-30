@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { TableActions } from "../shared/TableActions";
+import { TableActions } from "../../shared/TableActions";
 
 export const employeeColumns: ColumnDef<any>[] = [
   {
@@ -42,7 +42,7 @@ export const employeeColumns: ColumnDef<any>[] = [
       <TableActions
         id={row.original.id}
         editPath="/employee/edit"
-        deletePath="/employee"
+        deletePath="employee"
       />
     ),
   },

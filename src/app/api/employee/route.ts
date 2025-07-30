@@ -48,10 +48,9 @@ export async function POST(request: Request) {
   }
 }
 
-
 export async function GET() {
   try {
-    // Ambil data employees
+
     const employeesSnapshot = await getDocs(collection(db, "employees"));
     const employees = employeesSnapshot.docs.map((doc) => {
       const data = doc.data() as {
@@ -59,7 +58,7 @@ export async function GET() {
         email?: string;
         phone?: string;
         address?: string;
-        division?: string; // ini adalah ID dari division
+        division?: string;
         [key: string]: any;
       };
       return {
@@ -72,20 +71,17 @@ export async function GET() {
       };
     });
 
-    // Ambil data divisions
     const divisionsSnapshot = await getDocs(collection(db, "divisions"));
     const divisions = divisionsSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...(doc.data() as { name: string }),
     }));
 
-    // Buat map id -> name
     const divisionMap: Record<string, string> = {};
     divisions.forEach((division) => {
       divisionMap[division.id] = division.name;
     });
 
-    // Gabungkan division name ke employees
     const enrichedEmployees = employees.map((emp) => ({
       ...emp,
       division: {
@@ -93,7 +89,6 @@ export async function GET() {
         name: divisionMap[emp.division] || "Unknown",
       },
     }));
-console.log("Enriched Employees:", enrichedEmployees);
     return new Response(JSON.stringify(enrichedEmployees), {
       status: 200,
       headers: { "Content-Type": "application/json" },

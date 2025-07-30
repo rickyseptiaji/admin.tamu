@@ -108,7 +108,7 @@ export function EmployeeTable({data, isLoading}: EmployeeTableState) {
       return (
         row.original.fullName.toLowerCase().includes(value) ||
         row.original.email.toLowerCase().includes(value) ||
-        row.original.division.toLowerCase().includes(value) ||
+        row.original.division.name.toLowerCase().includes(value) ||
         row.original.phone.toLowerCase().includes(value) ||
         row.original.address.toLowerCase().includes(value)
       );

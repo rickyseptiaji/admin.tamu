@@ -24,7 +24,7 @@ export const employeeColumns: ColumnDef<any>[] = [
     header: "Email",
   },
   {
-    accessorKey: "division",
+    accessorKey: "divisionName",
     header: "Division",
   },
   {

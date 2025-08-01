@@ -19,7 +19,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import clsx from "clsx";
 
 export function NavMain({
   items,
@@ -75,10 +74,11 @@ export function NavMain({
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       tooltip={item.title}
-                      className={clsx(
-                        pathname === item.url &&
-                          "!bg-primary !text-primary-foreground"
-                      )}
+                      className={
+                        isParentActive
+                          ? "bg-primary text-primary-foreground"
+                          : ""
+                      }
                     >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
@@ -115,10 +115,11 @@ export function NavMain({
                 <SidebarMenuButton
                   asChild
                   tooltip={item.title}
-                  className={clsx(
-                    pathname === item.url &&
-                      "!bg-primary !text-primary-foreground"
-                  )}
+                  className={
+                    pathname === item.url
+                      ? "bg-primary text-primary-foreground"
+                      : ""
+                  }
                 >
                   <Link
                     href={item.url}

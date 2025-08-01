@@ -29,34 +29,24 @@ const data = {
       icon: LayoutDashboard,
     },
     {
-      title: "Playground",
+      title: "Visitor",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
+          title: "Guest",
+          url: "/guest",
+        },
+        {
+          title: "User",
+          url: "/user",
+        },
+        {
           title: "History",
           url: "#",
         },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
       ],
-    },
-    {
-      title: "Guest",
-      url: "/guest",
-      icon: Users,
-    },
-    {
-      title: "User",
-      url: "/user",
-      icon: Users,
     },
     {
       title: "Employee",

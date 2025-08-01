@@ -1,28 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react"
+import * as React from "react";
 
-import { NavDocuments } from "@/components/features/shared/nav-documents"
-import { NavMain } from "@/components/features/shared/nav-main"
-import { NavSecondary } from "@/components/features/shared/nav-secondary"
-import { NavUser } from "@/components/features/shared/nav-user"
+import { NavMain } from "@/components/features/shared/nav-main";
+import { NavUser } from "@/components/features/shared/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -31,7 +12,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { LayoutDashboard, SquareTerminal, Users } from "lucide-react";
+import { IconInnerShadowTop } from "@tabler/icons-react";
 
 const data = {
   user: {
@@ -43,27 +26,47 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: IconDashboard,
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Playground",
+      url: "#",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "History",
+          url: "#",
+        },
+        {
+          title: "Starred",
+          url: "#",
+        },
+        {
+          title: "Settings",
+          url: "#",
+        },
+      ],
     },
     {
       title: "Guest",
       url: "/guest",
-      icon: IconUsers,
+      icon: Users,
     },
     {
       title: "User",
       url: "/user",
-      icon: IconUsers,
+      icon: Users,
     },
     {
       title: "Employee",
       url: "/employee",
-      icon: IconUsers,
+      icon: Users,
     },
     {
       title: "Division",
       url: "/division",
-      icon: IconUsers,
+      icon: Users,
     },
   ],
   // navClouds: [
@@ -148,7 +151,7 @@ const data = {
   //     icon: IconFileWord,
   //   },
   // ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -177,5 +180,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

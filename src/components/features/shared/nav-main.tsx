@@ -7,18 +7,35 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ChevronRight, LucideIcon } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import clsx from "clsx";
+
 export function NavMain({
   items,
 }: {
   items: {
     title: string;
     url: string;
-    icon?: Icon;
+    icon?: LucideIcon;
+    isActive?: boolean;
+    items?: {
+      title: string;
+      url: string;
+    }[];
   }[];
 }) {
+  const pathname = usePathname();
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -43,11 +60,70 @@ export function NavMain({
         </SidebarMenu> */}
         <SidebarMenu>
           {items.map((item) => {
-            const isActive = usePathname() === item.url;
-            return (
+            const isParentActive =
+              pathname === item.url ||
+              item.items?.some((i) => i.url === pathname);
+
+            return item.items && item.items.length > 0 ? (
+              <Collapsible
+                key={item.title}
+                asChild
+                defaultOpen={item.isActive || isParentActive}
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      className={clsx(
+                        pathname === item.url &&
+                          "!bg-primary !text-primary-foreground"
+                      )}
+                    >
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items.map((subItem) => {
+                        const isActive = pathname === subItem.url;
+                        return (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton
+                              asChild
+                              className={
+                                isActive
+                                  ? "bg-primary text-primary-foreground"
+                                  : ""
+                              }
+                            >
+                              <Link href={subItem.url}>
+                                <span>{subItem.title}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        );
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            ) : (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild tooltip={item.title} className={isActive ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground" : ""}>
-                  <Link href={item.url}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.title}
+                  className={clsx(
+                    pathname === item.url &&
+                      "!bg-primary !text-primary-foreground"
+                  )}
+                >
+                  <Link
+                    href={item.url}
+                    className="flex items-center gap-2 w-full"
+                  >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                   </Link>

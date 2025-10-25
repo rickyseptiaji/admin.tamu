@@ -11,10 +11,10 @@ export const guestColumns: ColumnDef<any>[] = [
       row.index +
       1,
   },
-  {
-    accessorKey: "id",
-    header: "ID",
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: "ID",
+  // },
   {
     accessorKey: "fullName",
     header: "Full Name",

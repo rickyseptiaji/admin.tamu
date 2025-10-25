@@ -12,10 +12,10 @@ export const divisionColums: ColumnDef<any>[] = [
       row.index +
       1,
   },
-  {
-    accessorKey: "id",
-    header: "ID",
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: "ID",
+  // },
   {
     accessorKey: "name",
     header: "Division Name",

@@ -11,22 +11,30 @@ export const visitorColumns: ColumnDef<any>[] = [
       row.index +
       1,
   },
+  // {
+  //   accessorKey: "id",
+  //   header: "ID",
+  // },
   {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
-    accessorKey: "employeeId",
-    header: "Employee Id",
+    accessorKey: "employee.fullName",
+    header: "Employee Name",
+    cell: ({ row }) => row.original.employee?.fullName ?? "-",
   },
   {
     accessorKey: "description",
     header: "Description",
   },
   {
-    accessorKey: "userId",
-    header: "User Id",
+    accessorKey: "user.fullName",
+    header: "Visitor Name",
+    cell: ({ row }) => row.original.user?.fullName ?? "-",
   },
+  {
+    accessorKey: "createdAt",
+    header: "Date",
+    cell: ({ row }) => row.original.createdAt ?? "-",
+  },
+
   {
     id: "actions",
     header: "Actions",

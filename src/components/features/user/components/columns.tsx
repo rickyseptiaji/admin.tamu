@@ -24,20 +24,20 @@ export const userColumns: ColumnDef<any>[] = [
     header: "Email",
   },
   {
-    accessorKey: "division",
-    header: "Division",
-    cell: ({ row }) => {
-      const division = row.original.division;
-      return division ? division.name : "No Division";
-    },
-  },
-  {
     accessorKey: "phone",
     header: "Phone",
   },
   {
-    accessorKey: "address",
-    header: "Address",
+    accessorKey: "visitCount",
+    header: "Visit Count",
+       cell: ({ row }) => {
+      const count = row.original.visitCount;
+
+      if (count > 5) return "Sering";
+      if (count >= 3) return "Kadang";
+      if (count >= 1) return "Jarang";
+      return "Tidak Pernah";
+    },
   },
   {
     id: "actions",

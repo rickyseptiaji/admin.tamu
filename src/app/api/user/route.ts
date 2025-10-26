@@ -13,6 +13,7 @@ export async function GET() {
           companyName?: string;
           phone?: string;
           role?: string;
+          visitCount?: string
         };
         return {
           id: e.id,
@@ -21,6 +22,7 @@ export async function GET() {
           companyName: data.companyName,
           phone: data.companyName,
           role: data.role,
+          visitCount: data.visitCount
         };
       })
       .filter((user) => user.role != "admin");

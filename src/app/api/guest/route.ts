@@ -11,6 +11,7 @@ export async function GET() {
         email?: string;
         companyName?: string;
         phone?: string;
+        visitCount?: string
       };
       return {
         id: doc.id,
@@ -18,6 +19,7 @@ export async function GET() {
         email: data.email,
         companyName: data.companyName,
         phone: data.phone,
+        visitCount: data.visitCount
       };
     });
     return new NextResponse(JSON.stringify(guest))

@@ -1,7 +1,7 @@
-import GuestPage from "@/components/features/guest/page";
+import UserPage from "@/components/features/user/page";
 
 export default function Page() {
   return (
-      <GuestPage/>
+      <UserPage/>
   );
 }

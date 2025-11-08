@@ -60,8 +60,17 @@ import { DraggableRow } from "../../shared/data-table";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "../../shared/LoadingSpinner";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ChevronDownIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
+import { endOfMonth, format, startOfMonth } from "date-fns";
 
-interface VisitorTableProps {
+interface TableProps {
   id: string;
   fullName: string;
   email: string;
@@ -70,12 +79,12 @@ interface VisitorTableProps {
   address: string;
 }
 
-interface VisitorTableState {
-  data: VisitorTableProps[];
+interface TableState {
+  data: TableProps[];
   isLoading: boolean;
 }
 
-export function VisitorTable({data, isLoading}: VisitorTableState) {
+export function VisitorTable({ data, isLoading }: TableState) {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -107,10 +116,7 @@ export function VisitorTable({data, isLoading}: VisitorTableState) {
 
       return (
         row.original.fullName.toLowerCase().includes(value) ||
-        row.original.email.toLowerCase().includes(value) ||
-        row.original.division.name.toLowerCase().includes(value) ||
-        row.original.phone.toLowerCase().includes(value) ||
-        row.original.address.toLowerCase().includes(value)
+        row.original.email.toLowerCase().includes(value)
       );
     },
     getRowId: (row) => row.id.toString(),
@@ -131,7 +137,11 @@ export function VisitorTable({data, isLoading}: VisitorTableState) {
   const dataIds = data.map((row) => row.id.toString());
 
   const sensors = useSensors(useSensor(PointerSensor));
-
+  const [open, setOpen] = React.useState(false);
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
+  });
   // function handleDragEnd(event: DragEndEvent) {
   //   const { active, over } = event;
   //   if (active && over && active.id !== over.id) {
@@ -143,20 +153,20 @@ export function VisitorTable({data, isLoading}: VisitorTableState) {
   //   }
   // }
 
-  const handleAddGuest = () => {
-    router.push("/guest/create-guest");
-  };
+  // const handleAddGuest = () => {
+  //   router.push("/guest/create-guest");
+  // };
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
-      <div className="flex items-center justify-between px-4 lg:px-6">
+      {/* <div className="flex items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleAddGuest}>
             <IconPlus />
             <span className="hidden lg:inline">Add Guest</span>
           </Button>
         </div>
-      </div>
+      </div> */}
 
       {isLoading && data.length === 0 ? (
         <div className="flex h-full items-center justify-center">
@@ -167,22 +177,80 @@ export function VisitorTable({data, isLoading}: VisitorTableState) {
           value="outline"
           className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
         >
-          <div className="overflow-hidden rounded-lg border">
+          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis]}
               // onDragEnd={handleDragEnd}
               sensors={sensors}
             >
-              <div className="flex items-center justify-between p-2">
-                <Input
-                  placeholder="Search"
-                  className="max-w-sm"
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                />
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
+                {/* Date Range Picker */}
+                <div className="flex flex-col">
+                  <Label
+                    htmlFor="date"
+                    className="mb-1 text-sm font-medium text-muted-foreground"
+                  >
+                    Date
+                  </Label>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        id="date"
+                        className="w-[260px] justify-between rounded-lg border-muted-foreground/30 font-normal hover:bg-accent hover:text-accent-foreground"
+                      >
+                        {dateRange?.from ? (
+                          dateRange.to ? (
+                            <>
+                              {format(dateRange.from, "dd MMM yyyy")} –{" "}
+                              {format(dateRange.to, "dd MMM yyyy")}
+                            </>
+                          ) : (
+                            format(dateRange.from, "dd MMM yyyy")
+                          )
+                        ) : (
+                          <span className="text-muted-foreground">
+                            Select date range
+                          </span>
+                        )}
+                        <ChevronDownIcon className="h-4 w-4 opacity-60" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-2 shadow-md"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="range"
+                        captionLayout="dropdown"
+                        selected={dateRange}
+                        onSelect={(range) => {
+                          setDateRange(range);
+                          setOpen(false);
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
 
-                <Button>Export</Button>
+                {/* Search input */}
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Search..."
+                    className="w-[220px] rounded-lg bg-background text-sm"
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                  />
+
+                  {/* Export button */}
+                  <Button
+                    variant="default"
+                    className="rounded-lg bg-primary px-4 font-medium text-white hover:bg-primary/90"
+                  >
+                    Export
+                  </Button>
+                </div>
               </div>
               <Table>
                 <TableHeader className="bg-muted sticky top-0 z-10">

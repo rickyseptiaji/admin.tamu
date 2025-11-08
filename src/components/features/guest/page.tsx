@@ -27,7 +27,7 @@ export default function GuestPage() {
   },[])
   return (
     <>
-      <MainLayout title="Create Guest">
+      <MainLayout title="Guest">
         <GuestTable data={tableData} isLoading={isLoading} />
       </MainLayout>
     </>

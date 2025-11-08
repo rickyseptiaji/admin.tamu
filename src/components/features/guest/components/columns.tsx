@@ -43,15 +43,15 @@ export const guestColumns: ColumnDef<any>[] = [
       return "Tidak Pernah";
     },
   },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <TableActions
-        id={row.original.id}
-        editPath="/employee/edit"
-        deletePath="employee"
-      />
-    ),
-  },
+  // {
+  //   id: "actions",
+  //   header: "Actions",
+  //   cell: ({ row }) => (
+  //     <TableActions
+  //       id={row.original.id}
+  //       editPath="/employee/edit"
+  //       deletePath="employee"
+  //     />
+  //   ),
+  // },
 ];

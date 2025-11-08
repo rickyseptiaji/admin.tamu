@@ -11,43 +11,47 @@ export const userColumns: ColumnDef<any>[] = [
       row.index +
       1,
   },
+  // {
+  //   accessorKey: "id",
+  //   header: "ID",
+  // },
   {
-    accessorKey: "id",
-    header: "ID",
+    header: "Full Name",
+    cell: ({ row }) => row.original.fullName ?? "-",
   },
   {
-    accessorKey: "fullName",
-    header: "Employee Name",
-  },
-  {
-    accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => row.original.email ?? "-",
   },
   {
-    accessorKey: "phone",
-    header: "Phone",
+    header: "Company Name",
+    cell: ({ row }) => row.original.companyName ?? "-",
+  },
+  {
+    header: "No HP",
+    cell: ({ row }) => row.original.phone ?? "-",
   },
   {
     accessorKey: "visitCount",
     header: "Visit Count",
-       cell: ({ row }) => {
-      const count = row.original.visitCount;
-
-      if (count > 5) return "Sering";
-      if (count >= 3) return "Kadang";
-      if (count >= 1) return "Jarang";
-      return "Tidak Pernah";
-    },
   },
   {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <TableActions
-        id={row.original.id}
-        editPath="/employee/edit"
-        deletePath="employee"
-      />
-    ),
+    header: "Last Visit",
+    cell: ({ row }) => row.original.lastVisit ?? "-",
   },
+  {
+    header: "Kategori",
+    cell: ({ row }) => row.original.kategori ?? "-",
+  },
+  // {
+  //   id: "actions",
+  //   header: "Actions",
+  //   cell: ({ row }) => (
+  //     <TableActions
+  //       id={row.original.id}
+  //       editPath="/employee/edit"
+  //       deletePath="employee"
+  //     />
+  //   ),
+  // },
 ];

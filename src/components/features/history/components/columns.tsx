@@ -35,15 +35,15 @@ export const visitorColumns: ColumnDef<any>[] = [
     cell: ({ row }) => row.original.createdAt ?? "-",
   },
 
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <TableActions
-        id={row.original.id}
-        editPath="/employee/edit"
-        deletePath="employee"
-      />
-    ),
-  },
+  // {
+  //   id: "actions",
+  //   header: "Actions",
+  //   cell: ({ row }) => (
+  //     <TableActions
+  //       id={row.original.id}
+  //       editPath="/employee/edit"
+  //       deletePath="employee"
+  //     />
+  //   ),
+  // },
 ];

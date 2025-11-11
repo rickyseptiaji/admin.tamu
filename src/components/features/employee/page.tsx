@@ -26,7 +26,7 @@ export default function EmployeePage() {
     fetchData();
   }, []);
   return (
-    <MainLayout title="Create Employee">
+    <MainLayout title="Employee">
       <EmployeeTable  data={tableData} isLoading={isLoading} />
     </MainLayout>
   );

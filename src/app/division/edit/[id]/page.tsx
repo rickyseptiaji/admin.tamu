@@ -1,16 +1,10 @@
 "use client";
-
-import EditDivisionForm from "@/components/features/division/form/edit/edit-division-form";
-import { MainLayout } from "@/layout/mainLayout";
+import EditDivisionPage from "@/components/features/division/form/edit/page";
+import { useParams } from "next/navigation";
 
 export default function EditDivision() {
+  const params = useParams()
   return (
-    <MainLayout title="Edit Division">
-      <div className="px-4">
-        <div className="grid w-full max-w-sm items-center gap-3">
-          <EditDivisionForm />
-        </div>
-      </div>
-    </MainLayout>
+    <EditDivisionPage divisionId={params.id as string} />
   );
 }

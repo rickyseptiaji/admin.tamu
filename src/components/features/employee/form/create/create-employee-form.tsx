@@ -87,12 +87,16 @@ export default function CreateEmployeeForm() {
     }
     fetchDivision();
   }, []);
-if (division.length === 0) {
-    return <div><LoadingSpinner/></div>;
+  if (division.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="fullName"

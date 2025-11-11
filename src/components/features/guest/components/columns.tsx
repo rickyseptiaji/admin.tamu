@@ -32,8 +32,7 @@ export const guestColumns: ColumnDef<any>[] = [
     header: "Phone",
   },
   {
-    accessorKey: "visitCount",
-    header: "Visit Count",
+    header: "Kategori",
        cell: ({ row }) => {
       const count = row.original.visitCount;
 

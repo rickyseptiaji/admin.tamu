@@ -1,18 +1,12 @@
 import { db } from "@/lib/firebase";
 import {
-  collection,
   doc,
   getDoc,
-  getDocs,
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { NextRequest } from "next/server";
 
-export async function PUT(
-  request: Request,
-  { params }: any
-) {
+export async function PUT(request: Request, { params }: any) {
   const id = params.id;
 
   const body = await request.json();
@@ -43,13 +37,12 @@ export async function PUT(
   );
 }
 
-
-
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  console.log(id)
   try {
     const docRef = doc(db, "divisions", id);
     const docSnap = await getDoc(docRef);
@@ -74,11 +67,7 @@ export async function GET(
   }
 }
 
-
-export async function DELETE(
-  request: Request,
-  { params }: any
-) {
+export async function DELETE(request: Request, { params }: any) {
   const id = params.id;
 
   const divisionRef = doc(db, "divisions", id);

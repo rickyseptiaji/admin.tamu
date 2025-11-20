@@ -11,10 +11,6 @@ export const guestColumns: ColumnDef<any>[] = [
       row.index +
       1,
   },
-  // {
-  //   accessorKey: "id",
-  //   header: "ID",
-  // },
   {
     accessorKey: "fullName",
     header: "Full Name",
@@ -32,15 +28,27 @@ export const guestColumns: ColumnDef<any>[] = [
     header: "Phone",
   },
   {
-    header: "Kategori",
-       cell: ({ row }) => {
-      const count = row.original.visitCount;
-
-      if (count > 5) return "Sering";
-      if (count >= 3) return "Kadang";
-      if (count >= 1) return "Jarang";
-      return "Tidak Pernah";
+    accessorKey: "visitCount",
+    header: "Visit Count",
+  },
+  {
+    header: "Last Visit",
+    cell: ({ row }) => {
+      const date = row.original.lastVisit;
+      if (!date) return "-";
+      const formated = new Intl.DateTimeFormat("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(date));
+      return formated;
     },
+  },
+  {
+    header: "Kategori",
+    cell: ({ row }) => row.original.kategori ?? "-",
   },
   // {
   //   id: "actions",

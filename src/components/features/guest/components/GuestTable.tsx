@@ -70,21 +70,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
-interface TableProps {
-  id: string;
-  fullName: string;
-  email: string;
-  companyName: string;
-  phone: string;
-}
-
-interface TableState {
-  data: TableProps[];
-  isLoading: boolean;
-}
-
-export function GuestTable({ data, isLoading }: TableState) {
+export function GuestTable() {
   const router = useRouter();
+  const [data, setData] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -97,7 +86,32 @@ export function GuestTable({ data, isLoading }: TableState) {
     pageIndex: 0,
     pageSize: 10,
   });
-
+  const [open, setOpen] = React.useState(false);
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
+  });
+  const fetchData = async () => {
+    if (!dateRange?.from || !dateRange?.to) return;
+    setIsLoading(true);
+    try {
+      const start = dateRange.from.toISOString();
+      const end = dateRange.to.toISOString();
+      const response = await fetch(`/api/guest?start=${start}&end=${end}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch guest data");
+      }
+      const data = await response.json();
+      setData(data);
+    } catch (error) {
+      console.error("Error fetching guest data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [dateRange]);
   const table = useReactTable({
     data: data,
     columns: guestColumns,
@@ -135,14 +149,9 @@ export function GuestTable({ data, isLoading }: TableState) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const dataIds = data.map((row) => row.id.toString());
+  const dataIds = data.map((row) => row["id"]);
 
   const sensors = useSensors(useSensor(PointerSensor));
-  const [open, setOpen] = React.useState(false);
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
-    from: startOfMonth(new Date()),
-    to: endOfMonth(new Date()),
-  });
   // function handleDragEnd(event: DragEndEvent) {
   //   const { active, over } = event;
   //   if (active && over && active.id !== over.id) {

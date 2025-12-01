@@ -1,6 +1,6 @@
 import { auth, db } from "@/lib/firebase";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { doc, setDoc } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
@@ -17,15 +17,26 @@ export async function POST(req: NextRequest) {
         status: 404,
       });
     }
-    await setDoc(doc(db, "users",  user.uid), {
+    await setDoc(doc(db, "users", user.uid), {
       userId: user.uid,
       email: user.email,
       role: "admin",
       createdAt: new Date().toISOString(),
     });
+
+    return NextResponse.json(
+      {
+        ok: true,
+        message: "Register successful",
+      },
+      { status: 201 }
+    );
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Registration failed, please try again" }),
+      JSON.stringify({
+        ok: false,
+        error: "Registration failed, please try again",
+      }),
       { status: 500 }
     );
   }

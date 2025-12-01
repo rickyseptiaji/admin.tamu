@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
     const userToken = await userCredential.user.getIdToken();
     const res = new NextResponse(
-      JSON.stringify({ message: "Login successful" }),
+      JSON.stringify({ ok: true, message: "Login successful" }),
       {
         status: 200,
       }
@@ -42,9 +42,9 @@ export async function POST(req: NextRequest) {
     });
     return res;
   } catch (error: any) {
-  return new NextResponse(
-    JSON.stringify({ error: "Login failed, please try again" }),
-    { status: 500 }
-  );
+    return new NextResponse(
+      JSON.stringify({ ok: false, error: "Login failed, please try again" }),
+      { status: 500 }
+    );
   }
 }

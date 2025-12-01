@@ -17,6 +17,7 @@ import { authSchema } from "../validator";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof authSchema>) {
     const { email, password } = values;
-     await fetch("/api/login", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,6 +40,13 @@ export function LoginForm() {
       body: JSON.stringify({ email, password }),
     });
 
+    const data = await res.json();
+
+    if (!data.ok) {
+      toast.error(data.error || "Login gagal, coba lagi");
+      return;
+    }
+    toast.success("Login Berhasil");
     router.push("/dashboard");
   }
 

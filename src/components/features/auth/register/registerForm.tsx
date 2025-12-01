@@ -19,6 +19,7 @@ import { auth } from "@/lib/firebase";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -33,14 +34,20 @@ export function RegisterForm() {
   });
   async function onSubmit(values: z.infer<typeof authSchema>) {
     const { email, password } = values;
-     await fetch("/api/register", {
+    const res = await fetch("/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
+    const data = await res.json();
 
+    if (!data.ok) {
+      toast.error(data.error || "Register gagal, coba lagi");
+      return;
+    }
+    toast.success("Register Berhasil");
     router.push("/login");
   }
   return (

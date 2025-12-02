@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     });
 
     return new Response(
-      JSON.stringify({ message: "Employee created", id: docRef.id }),
+      JSON.stringify({ ok: true, message: "Employee created", id: docRef.id }),
       {
         status: 201,
         headers: { "Content-Type": "application/json" },
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating employee:", error);
     return new Response(
-      JSON.stringify({ error: "Failed to create employee" }),
+      JSON.stringify({ ok: false, error: "Failed to create employee" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -50,7 +50,6 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-
     const employeesSnapshot = await getDocs(collection(db, "employees"));
     const employees = employeesSnapshot.docs.map((doc) => {
       const data = doc.data() as {

@@ -29,7 +29,11 @@ type Division = {
   name: string;
 };
 
-export default function EditDivisionForm({ divisionId }: { divisionId: string }) {
+export default function EditDivisionForm({
+  divisionId,
+}: {
+  divisionId: string;
+}) {
   const router = useRouter();
   const [division, setDivision] = useState<Division | null>(null);
 
@@ -69,7 +73,10 @@ export default function EditDivisionForm({ divisionId }: { divisionId: string })
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) throw new Error("Update failed");
+      if (!res.ok) {
+        toast.error("Division updated failed");
+        return;
+      }
 
       toast.success("Division updated successfully");
       router.push("/division");

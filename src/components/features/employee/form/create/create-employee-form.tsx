@@ -64,7 +64,10 @@ export default function CreateEmployeeForm() {
         },
         body: JSON.stringify({ fullName, email, phone, address, division }),
       });
-      if (!response.ok) throw new Error("Failed to update employee");
+      if (!response.ok) {
+        toast.error("Employee created failed");
+        return;
+      }
       toast.success("Employee created successfully");
       router.push("/employee");
     } catch (error) {

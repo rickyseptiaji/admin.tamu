@@ -50,7 +50,7 @@ export async function PUT(
     await updateDoc(employeeRef, updatedData);
 
     return new Response(
-      JSON.stringify({ message: "Employee updated successfully" }),
+      JSON.stringify({ ok: true, message: "Employee updated successfully" }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -58,7 +58,7 @@ export async function PUT(
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Failed to update employee" }),
+      JSON.stringify({ ok: false, error: "Failed to update employee" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

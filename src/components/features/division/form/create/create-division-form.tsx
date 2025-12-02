@@ -28,22 +28,27 @@ export default function CreateDivisionForm() {
       division: "",
     },
   });
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
-      const { division } = data;
-      await fetch("/api/division", {
+      const { division } = values;
+      const res = await fetch("/api/division", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name: division }),
       });
+
+      const data = await res.json();
+      if (!data.ok) {
+        toast.error("Division created failed");
+        return;
+      }
       toast.success("Division created successfully");
       router.push("/division");
     } catch (error) {
       toast.error("Failed to create division");
     }
-
   }
   return (
     <Form {...form}>

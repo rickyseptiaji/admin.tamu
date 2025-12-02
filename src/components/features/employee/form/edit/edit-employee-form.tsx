@@ -70,7 +70,10 @@ export default function EditEmployeeForm({
           body: JSON.stringify(data),
         });
 
-        if (!response.ok) throw new Error("Failed to update employee");
+        if (!response.ok) {
+          toast.error("Employee updated failed");
+          return;
+        }
 
         const updatedEmployee = await response.json();
         setEmployee(updatedEmployee);

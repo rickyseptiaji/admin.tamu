@@ -29,6 +29,22 @@ const data = {
       icon: LayoutDashboard,
     },
     {
+      title: "Data",
+      url: "#",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "Guest",
+          url: "/data/guest",
+        },
+        {
+          title: "User",
+          url: "/data/user",
+        },
+      ],
+    },
+    {
       title: "Visitor",
       url: "#",
       icon: SquareTerminal,
@@ -36,15 +52,15 @@ const data = {
       items: [
         {
           title: "Guest",
-          url: "/guest",
+          url: "/visitor/guest",
         },
         {
           title: "User",
-          url: "/user",
+          url: "/visitor/user",
         },
         {
           title: "History",
-          url: "/history",
+          url: "/visitor/history",
         },
       ],
     },
@@ -143,7 +159,7 @@ const data = {
   // ],
 };
 
-export function  AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>

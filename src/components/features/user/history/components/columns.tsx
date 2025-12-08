@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { TableActions } from "../../shared/TableActions";
+import { TableActions } from "../../../shared/TableActions";
 
 export const visitorColumns: ColumnDef<any>[] = [
   {

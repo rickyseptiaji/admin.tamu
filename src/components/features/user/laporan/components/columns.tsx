@@ -1,8 +1,7 @@
-import { TableActions } from "@/components/features/shared/TableActions";
 import { ColumnDef } from "@tanstack/react-table";
 
 
-export const dataGuestColumns: ColumnDef<any>[] = [
+export const userColumns: ColumnDef<any>[] = [
   {
     id: "no",
     header: "No",
@@ -12,21 +11,25 @@ export const dataGuestColumns: ColumnDef<any>[] = [
       row.index +
       1,
   },
+  // {
+  //   accessorKey: "id",
+  //   header: "ID",
+  // },
   {
-    accessorKey: "fullName",
     header: "Full Name",
+    cell: ({ row }) => row.original.fullName ?? "-",
   },
   {
-    accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => row.original.email ?? "-",
   },
   {
-    accessorKey: "companyName",
-    header: "Company",
+    header: "Company Name",
+    cell: ({ row }) => row.original.companyName ?? "-",
   },
   {
-    accessorKey: "phone",
-    header: "Phone",
+    header: "No HP",
+    cell: ({ row }) => row.original.phone ?? "-",
   },
   {
     accessorKey: "visitCount",
@@ -51,15 +54,15 @@ export const dataGuestColumns: ColumnDef<any>[] = [
     header: "Kategori",
     cell: ({ row }) => row.original.kategori ?? "-",
   },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <TableActions
-        id={row.original.id}
-        editPath="/guest/edit"
-        deletePath="guest"
-      />
-    ),
-  },
+  // {
+  //   id: "actions",
+  //   header: "Actions",
+  //   cell: ({ row }) => (
+  //     <TableActions
+  //       id={row.original.id}
+  //       editPath="/employee/edit"
+  //       deletePath="employee"
+  //     />
+  //   ),
+  // },
 ];

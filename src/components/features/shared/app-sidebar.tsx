@@ -29,38 +29,42 @@ const data = {
       icon: LayoutDashboard,
     },
     {
-      title: "Data",
+      title: "User Management",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "Guest",
-          url: "/data/guest",
+          title: "User",
+          url: "#",
         },
         {
-          title: "User",
-          url: "/data/user",
+          title: "Laporan",
+          url: "/user/laporan",
+        },
+        {
+          title: "History",
+          url: "/user/history",
         },
       ],
     },
     {
-      title: "Visitor",
+      title: "Guest Management",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "Guest",
-          url: "/visitor/guest",
+          url: "#",
         },
         {
-          title: "User",
-          url: "/visitor/user",
+          title: "Laporan",
+          url: "/guest/laporan",
         },
         {
           title: "History",
-          url: "/visitor/history",
+          url: "#",
         },
       ],
     },

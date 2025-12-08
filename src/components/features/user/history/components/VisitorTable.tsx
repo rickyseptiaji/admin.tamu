@@ -15,7 +15,7 @@ import {
   type RowSelectionState,
   type PaginationState,
 } from "@tanstack/react-table";
-import { userColumns } from "./columns";
+import { visitorColumns } from "./columns";
 import React, { useEffect } from "react";
 import {
   closestCenter,
@@ -56,24 +56,36 @@ import {
   IconChevronsRight,
 } from "@tabler/icons-react";
 import { Label } from "@/components/ui/label";
-import { DraggableRow } from "../../shared/data-table";
+import { DraggableRow } from "../../../shared/data-table";
 import { useRouter } from "next/navigation";
-import { LoadingSpinner } from "../../shared/LoadingSpinner";
+import { LoadingSpinner } from "../../../shared/LoadingSpinner";
 import { Input } from "@/components/ui/input";
-import { DateRange } from "react-day-picker";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ChevronDownIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 
-export function UserTable() {
+interface TableProps {
+  id: string;
+  fullName: string;
+  email: string;
+  companyName: string;
+  phone: string;
+  address: string;
+}
+
+interface TableState {
+  data: TableProps[];
+  isLoading: boolean;
+}
+
+export function VisitorTable({ data, isLoading }: TableState) {
   const router = useRouter();
-  const [data, setData] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -86,36 +98,10 @@ export function UserTable() {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [open, setOpen] = React.useState(false);
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
-    from: startOfMonth(new Date()),
-    to: endOfMonth(new Date()),
-  });
-  const fetchData = async () => {
-    if (!dateRange?.from || !dateRange?.to) return;
-    setIsLoading(true);
-    try {
-      const start = dateRange.from.toISOString();
-      const end = dateRange.to.toISOString();
-      const response = await fetch(`/api/user?start=${start}&end=${end}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch users data");
-      }
-      const data = await response.json();
-      setData(data);
-    } catch (error) {
-      console.error("Error fetching guest data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [dateRange]);
 
   const table = useReactTable({
     data: data,
-    columns: userColumns,
+    columns: visitorColumns,
     state: {
       sorting,
       columnVisibility,
@@ -130,10 +116,7 @@ export function UserTable() {
 
       return (
         row.original.fullName.toLowerCase().includes(value) ||
-        row.original.email.toLowerCase().includes(value) ||
-        row.original.division.name.toLowerCase().includes(value) ||
-        row.original.phone.toLowerCase().includes(value) ||
-        row.original.address.toLowerCase().includes(value)
+        row.original.email.toLowerCase().includes(value)
       );
     },
     getRowId: (row) => row.id.toString(),
@@ -151,10 +134,14 @@ export function UserTable() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const dataIds = data.map((row) => row["id"]);
+  const dataIds = data.map((row) => row.id.toString());
 
   const sensors = useSensors(useSensor(PointerSensor));
-
+  const [open, setOpen] = React.useState(false);
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
+  });
   // function handleDragEnd(event: DragEndEvent) {
   //   const { active, over } = event;
   //   if (active && over && active.id !== over.id) {
@@ -166,17 +153,17 @@ export function UserTable() {
   //   }
   // }
 
-  // const handleAddUser = () => {
-  //   router.push("/user/create-user");
+  // const handleAddGuest = () => {
+  //   router.push("/guest/create-guest");
   // };
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
       {/* <div className="flex items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleAddUser}>
+          <Button variant="outline" size="sm" onClick={handleAddGuest}>
             <IconPlus />
-            <span className="hidden lg:inline">Add User</span>
+            <span className="hidden lg:inline">Add Guest</span>
           </Button>
         </div>
       </div> */}
@@ -194,9 +181,9 @@ export function UserTable() {
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis]}
+              // onDragEnd={handleDragEnd}
               sensors={sensors}
             >
-              {/* 🔹 Header toolbar */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
                 {/* Date Range Picker */}
                 <div className="flex flex-col">
@@ -265,8 +252,6 @@ export function UserTable() {
                   </Button>
                 </div>
               </div>
-
-              {/* 🔹 Table section */}
               <Table>
                 <TableHeader className="bg-muted sticky top-0 z-10">
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -297,7 +282,7 @@ export function UserTable() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={userColumns.length}
+                        colSpan={visitorColumns.length}
                         className="h-24 text-center"
                       >
                         No results.

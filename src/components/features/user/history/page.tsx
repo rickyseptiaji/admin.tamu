@@ -9,7 +9,7 @@ export default function VisitorPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/history");
+      const response = await fetch("/api/user/history");
       if (!response.ok) {
         throw new Error("Failed to fetch users data");
       }

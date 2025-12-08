@@ -1,4 +1,5 @@
-import UserPage from "@/components/features/user/page";
+import UserPage from "@/components/features/user/laporan/page";
+
 
 export default function Page() {
   return (

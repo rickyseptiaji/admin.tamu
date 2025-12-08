@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 
-export const laporanUserColumns: ColumnDef<any>[] = [
+export const userColumns: ColumnDef<any>[] = [
   {
     id: "no",
     header: "No",

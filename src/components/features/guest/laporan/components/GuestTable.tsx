@@ -70,7 +70,7 @@ import { DateRange } from "react-day-picker";
 import { LoadingSpinner } from "../../../shared/LoadingSpinner";
 import { DraggableRow } from "../../../shared/data-table";
 
-export function GuestTable() {
+export function LaporanGuestTable() {
   const router = useRouter();
   const [data, setData] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);

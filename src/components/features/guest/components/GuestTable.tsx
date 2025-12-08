@@ -15,7 +15,7 @@ import {
   type RowSelectionState,
   type PaginationState,
 } from "@tanstack/react-table";
-import { laporanUserColumns } from "./columns";
+import { guestColumns } from "./columns";
 import React, { useEffect } from "react";
 import {
   closestCenter,
@@ -58,19 +58,20 @@ import {
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { DateRange } from "react-day-picker";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ChevronDownIcon } from "lucide-react";
 import { endOfMonth, format, startOfMonth } from "date-fns";
-import { LoadingSpinner } from "../../../shared/LoadingSpinner";
-import { DraggableRow } from "../../../shared/data-table";
+import { Calendar } from "@/components/ui/calendar";
+import { ChevronDownIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
+import { LoadingSpinner } from "../../shared/LoadingSpinner";
+import { DraggableRow } from "../../shared/data-table";
 
-export function LaporanUserTable() {
+
+export function GuestTable() {
   const router = useRouter();
   const [data, setData] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -97,9 +98,11 @@ export function LaporanUserTable() {
     try {
       const start = dateRange.from.toISOString();
       const end = dateRange.to.toISOString();
-      const response = await fetch(`/api/user/laporan?start=${start}&end=${end}`);
+      const response = await fetch(
+        `/api/guest/laporan?start=${start}&end=${end}`
+      );
       if (!response.ok) {
-        throw new Error("Failed to fetch users data");
+        throw new Error("Failed to fetch guest data");
       }
       const data = await response.json();
       setData(data);
@@ -112,10 +115,9 @@ export function LaporanUserTable() {
   useEffect(() => {
     fetchData();
   }, [dateRange]);
-
   const table = useReactTable({
     data: data,
-    columns: laporanUserColumns,
+    columns: guestColumns,
     state: {
       sorting,
       columnVisibility,
@@ -132,8 +134,7 @@ export function LaporanUserTable() {
         row.original.fullName.toLowerCase().includes(value) ||
         row.original.email.toLowerCase().includes(value) ||
         row.original.division.name.toLowerCase().includes(value) ||
-        row.original.phone.toLowerCase().includes(value) ||
-        row.original.address.toLowerCase().includes(value)
+        row.original.phone.toLowerCase().includes(value)
       );
     },
     getRowId: (row) => row.id.toString(),
@@ -154,7 +155,6 @@ export function LaporanUserTable() {
   const dataIds = data.map((row) => row["id"]);
 
   const sensors = useSensors(useSensor(PointerSensor));
-
   // function handleDragEnd(event: DragEndEvent) {
   //   const { active, over } = event;
   //   if (active && over && active.id !== over.id) {
@@ -166,17 +166,17 @@ export function LaporanUserTable() {
   //   }
   // }
 
-  // const handleAddUser = () => {
-  //   router.push("/user/create-user");
+  // const handleAddGuest = () => {
+  //   router.push("/guest/create-guest");
   // };
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
       {/* <div className="flex items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleAddUser}>
+          <Button variant="outline" size="sm" onClick={handleAddGuest}>
             <IconPlus />
-            <span className="hidden lg:inline">Add User</span>
+            <span className="hidden lg:inline">Add Guest</span>
           </Button>
         </div>
       </div> */}
@@ -194,9 +194,9 @@ export function LaporanUserTable() {
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis]}
+              // onDragEnd={handleDragEnd}
               sensors={sensors}
             >
-              {/* 🔹 Header toolbar */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
                 {/* Date Range Picker */}
                 <div className="flex flex-col">
@@ -265,8 +265,6 @@ export function LaporanUserTable() {
                   </Button>
                 </div>
               </div>
-
-              {/* 🔹 Table section */}
               <Table>
                 <TableHeader className="bg-muted sticky top-0 z-10">
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -297,7 +295,7 @@ export function LaporanUserTable() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={laporanUserColumns.length}
+                        colSpan={guestColumns.length}
                         className="h-24 text-center"
                       >
                         No results.

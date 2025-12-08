@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 
-export const laporanUserColumns: ColumnDef<any>[] = [
+export const guestColumns: ColumnDef<any>[] = [
   {
     id: "no",
     header: "No",
@@ -11,25 +11,21 @@ export const laporanUserColumns: ColumnDef<any>[] = [
       row.index +
       1,
   },
-  // {
-  //   accessorKey: "id",
-  //   header: "ID",
-  // },
   {
+    accessorKey: "fullName",
     header: "Full Name",
-    cell: ({ row }) => row.original.fullName ?? "-",
   },
   {
+    accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => row.original.email ?? "-",
   },
   {
-    header: "Company Name",
-    cell: ({ row }) => row.original.companyName ?? "-",
+    accessorKey: "companyName",
+    header: "Company",
   },
   {
-    header: "No HP",
-    cell: ({ row }) => row.original.phone ?? "-",
+    accessorKey: "phone",
+    header: "Phone",
   },
   {
     accessorKey: "visitCount",

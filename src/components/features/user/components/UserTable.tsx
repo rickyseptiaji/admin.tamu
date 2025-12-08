@@ -15,7 +15,7 @@ import {
   type RowSelectionState,
   type PaginationState,
 } from "@tanstack/react-table";
-import { laporanUserColumns } from "./columns";
+import { userColumns } from "./columns";
 import React, { useEffect } from "react";
 import {
   closestCenter,
@@ -67,10 +67,11 @@ import {
 } from "@/components/ui/popover";
 import { ChevronDownIcon } from "lucide-react";
 import { endOfMonth, format, startOfMonth } from "date-fns";
-import { LoadingSpinner } from "../../../shared/LoadingSpinner";
-import { DraggableRow } from "../../../shared/data-table";
+import { LoadingSpinner } from "../../shared/LoadingSpinner";
+import { DraggableRow } from "../../shared/data-table";
 
-export function LaporanUserTable() {
+
+export function UserTable() {
   const router = useRouter();
   const [data, setData] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -115,7 +116,7 @@ export function LaporanUserTable() {
 
   const table = useReactTable({
     data: data,
-    columns: laporanUserColumns,
+    columns: userColumns,
     state: {
       sorting,
       columnVisibility,
@@ -297,7 +298,7 @@ export function LaporanUserTable() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={laporanUserColumns.length}
+                        colSpan={userColumns.length}
                         className="h-24 text-center"
                       >
                         No results.

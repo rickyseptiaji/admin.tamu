@@ -1,14 +1,14 @@
 "use client";
 import { MainLayout } from "@/layout/mainLayout";
 import React, { useEffect } from "react";
-import { GuestTable } from "./components/GuestTable";
+import { LaporanGuestTable } from "./components/GuestTable";
 
 
-export default function GuestPage() {
+export default function LapoanGuestPage() {
   return (
     <>
-      <MainLayout title="Guest">
-        <GuestTable/>
+      <MainLayout title="Laporan Guest">
+        <LaporanGuestTable/>
       </MainLayout>
     </>
   );

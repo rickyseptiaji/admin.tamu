@@ -31,29 +31,6 @@ export const userColumns: ColumnDef<any>[] = [
     header: "No HP",
     cell: ({ row }) => row.original.phone ?? "-",
   },
-  {
-    accessorKey: "visitCount",
-    header: "Visit Count",
-  },
-  {
-    header: "Last Visit",
-    cell: ({ row }) => {
-      const date = row.original.lastVisit;
-      if (!date) return "-";
-      const formated = new Intl.DateTimeFormat("id-ID", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(new Date(date));
-      return formated;
-    },
-  },
-  {
-    header: "Kategori",
-    cell: ({ row }) => row.original.kategori ?? "-",
-  },
   // {
   //   id: "actions",
   //   header: "Actions",

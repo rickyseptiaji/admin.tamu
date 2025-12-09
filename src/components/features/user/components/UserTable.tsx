@@ -98,7 +98,7 @@ export function UserTable() {
     try {
       const start = dateRange.from.toISOString();
       const end = dateRange.to.toISOString();
-      const response = await fetch(`/api/user/laporan?start=${start}&end=${end}`);
+      const response = await fetch(`/api/user`);
       if (!response.ok) {
         throw new Error("Failed to fetch users data");
       }
@@ -167,20 +167,20 @@ export function UserTable() {
   //   }
   // }
 
-  // const handleAddUser = () => {
-  //   router.push("/user/create-user");
-  // };
+  const handleAddUser = () => {
+    router.push("/user/create-user");
+  };
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
-      {/* <div className="flex items-center justify-between px-4 lg:px-6">
+      <div className="flex items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleAddUser}>
             <IconPlus />
             <span className="hidden lg:inline">Add User</span>
           </Button>
         </div>
-      </div> */}
+      </div>
 
       {isLoading && data.length === 0 ? (
         <div className="flex h-full items-center justify-center">
@@ -200,7 +200,7 @@ export function UserTable() {
               {/* 🔹 Header toolbar */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
                 {/* Date Range Picker */}
-                <div className="flex flex-col">
+                {/* <div className="flex flex-col">
                   <Label
                     htmlFor="date"
                     className="mb-1 text-sm font-medium text-muted-foreground"
@@ -246,7 +246,7 @@ export function UserTable() {
                       />
                     </PopoverContent>
                   </Popover>
-                </div>
+                </div> */}
 
                 {/* Search input */}
                 <div className="flex items-center gap-2">

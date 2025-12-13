@@ -1,15 +1,15 @@
 "use client";
 import { MainLayout } from "@/layout/mainLayout";
-import { VisitorUserTable } from "./components/VisitorTable";
+import { VisitorGuestTable } from "./components/VisitorTable";
 import React, { useEffect } from "react";
 
-export default function VisitorUserPage() {
+export default function VisitorGuestPage() {
   const [tableData, setTableData] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/user/history");
+      const response = await fetch("/api/guest/history");
       if (!response.ok) {
         throw new Error("Failed to fetch users data");
       }
@@ -28,7 +28,7 @@ export default function VisitorUserPage() {
   return (
     <>
       <MainLayout title="History">
-        <VisitorUserTable data={tableData} isLoading={isLoading} />
+        <VisitorGuestTable data={tableData} isLoading={isLoading} />
       </MainLayout>
     </>
   );

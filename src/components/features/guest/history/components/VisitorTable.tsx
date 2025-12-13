@@ -15,7 +15,7 @@ import {
   type RowSelectionState,
   type PaginationState,
 } from "@tanstack/react-table";
-import { visitorUserColumns } from "./columns";
+import { visitorGuestColumns } from "./columns";
 import React, { useEffect } from "react";
 import {
   closestCenter,
@@ -84,7 +84,7 @@ interface TableState {
   isLoading: boolean;
 }
 
-export function VisitorUserTable({ data, isLoading }: TableState) {
+export function VisitorGuestTable({ data, isLoading }: TableState) {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -101,7 +101,7 @@ export function VisitorUserTable({ data, isLoading }: TableState) {
 
   const table = useReactTable({
     data: data,
-    columns: visitorUserColumns,
+    columns: visitorGuestColumns,
     state: {
       sorting,
       columnVisibility,
@@ -282,7 +282,7 @@ export function VisitorUserTable({ data, isLoading }: TableState) {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={visitorUserColumns.length}
+                        colSpan={visitorGuestColumns.length}
                         className="h-24 text-center"
                       >
                         No results.

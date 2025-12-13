@@ -1,11 +1,5 @@
 import { db } from "@/lib/firebase";
-import {
-  addDoc,
-  collection,
-  doc,
-  serverTimestamp,
-  setDoc,
-} from "@firebase/firestore";
+import { collection, doc, serverTimestamp, setDoc } from "@firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
@@ -20,14 +14,14 @@ export async function POST(
     const visitId = newDocRef.id;
     await setDoc(newDocRef, {
       id: visitId,
-      userId: id,
+      guestId: id,
       employeeId,
       description,
       createdAt: serverTimestamp(),
     });
     return NextResponse.json(
       {
-        message: "Berhasil",
+        message: "Berhasil menambahkan req guest",
       },
       {
         status: 201,
@@ -36,7 +30,7 @@ export async function POST(
   } catch (error) {
     return NextResponse.json(
       {
-        message: "Internal Server error",
+        message: "Internal server error",
       },
       {
         status: 500,

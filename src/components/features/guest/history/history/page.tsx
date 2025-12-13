@@ -1,6 +1,6 @@
 "use client";
 import { MainLayout } from "@/layout/mainLayout";
-import { VisitorUserTable } from "./components/VisitorTable";
+import { VisitorUserTable } from "../components/VisitorTable";
 import React, { useEffect } from "react";
 
 export default function VisitorUserPage() {

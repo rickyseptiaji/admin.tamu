@@ -1,5 +1,5 @@
-import VisitorPage from "@/components/features/user/history/page";
+import VisitorUserPage from "@/components/features/user/history/page";
 
 export default function Page() {
-  return <VisitorPage />;
+  return <VisitorUserPage />;
 }

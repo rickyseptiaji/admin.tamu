@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import "react-phone-number-input/style.css";
 import { Textarea } from "@/components/ui/textarea";
+import { LoadingSpinner } from "../../shared/LoadingSpinner";
 
 const FormSchema = z.object({
   employeeId: z.string(),
@@ -34,6 +35,7 @@ const FormSchema = z.object({
 export default function CreateReqUserForm({ userId }: { userId: string }) {
   const router = useRouter();
   const [employee, setEmployee] = useState<any[]>([]);
+  const [initialLoading, setInitialLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -44,6 +46,7 @@ export default function CreateReqUserForm({ userId }: { userId: string }) {
   useEffect(() => {
     async function fetchDivision() {
       try {
+        setInitialLoading(true);
         const response = await fetch("/api/employee");
         if (!response.ok) {
           throw new Error("Failed to fetch employee");
@@ -52,6 +55,8 @@ export default function CreateReqUserForm({ userId }: { userId: string }) {
         setEmployee(data);
       } catch (error) {
         console.error("Error fetching employee:", error);
+      } finally {
+        setInitialLoading(false);
       }
     }
     fetchDivision();
@@ -80,6 +85,13 @@ export default function CreateReqUserForm({ userId }: { userId: string }) {
     } catch (error) {
       toast.error("Failed to create user");
     }
+  }
+  if (initialLoading && employee.length != null) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
   return (
     <Form {...form}>

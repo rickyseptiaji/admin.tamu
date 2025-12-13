@@ -64,7 +64,7 @@ const data = {
         },
         {
           title: "History",
-          url: "#",
+          url: "/guest/history",
         },
       ],
     },

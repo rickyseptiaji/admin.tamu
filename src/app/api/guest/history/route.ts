@@ -7,7 +7,7 @@ import {
   query,
   where,
 } from "@firebase/firestore";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 function formatDate(timestamp: any): string {
   if (!timestamp) return "";
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -18,16 +18,16 @@ function formatDate(timestamp: any): string {
     .toString()
     .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 }
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const q = query(collection(db, "visits"), where("userId", "!=", null));
+    const q = query(collection(db, "visits"), where("guestId", "!=", null));
     const visitSnapshot = await getDocs(q);
     const visitData = await Promise.all(
       visitSnapshot.docs.map(async (e) => {
         const data = e.data() as {
           employeeId?: string;
           description?: string;
-          userId?: string;
+          guestId?: string;
           createdAt?: any;
         };
 
@@ -43,14 +43,14 @@ export async function GET() {
           }
         }
 
-        let user = null;
-        if (data.userId) {
-          const userRef = doc(db, "users", data.userId);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
-            user = {
-              id: userSnap.id,
-              ...userSnap.data(),
+        let guest = null;
+        if (data.guestId) {
+          const guestRef = doc(db, "guests", data.guestId);
+          const guestSnap = await getDoc(guestRef);
+          if (guestSnap.exists()) {
+            guest = {
+              id: guestSnap.id,
+              ...guestSnap.data(),
             };
           }
         }
@@ -59,17 +59,21 @@ export async function GET() {
           description: data.description,
           createdAt: formatDate(data.createdAt),
           employee,
-          user,
+          guest,
         };
       })
     );
-    return new NextResponse(JSON.stringify(visitData), {
+    return NextResponse.json(visitData, {
       status: 200,
     });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: "failed fetch data" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json(
+      {
+        message: "Internal server error",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TableActions } from "../../../shared/TableActions";
 
-export const visitorUserColumns: ColumnDef<any>[] = [
+export const visitorGuestColumns: ColumnDef<any>[] = [
   {
     id: "no",
     header: "No",

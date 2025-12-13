@@ -11,7 +11,7 @@ export async function GET(
     const docRef = doc(db, "employees", id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
-      return new Response(JSON.stringify({ error: "Employee not found" }), {
+      return new Response(JSON.stringify({ message: "Employee not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
@@ -21,7 +21,7 @@ export async function GET(
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to fetch employee" }), {
+    return new Response(JSON.stringify({ message: "Failed to fetch employee" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
@@ -58,7 +58,7 @@ export async function PUT(
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ ok: false, error: "Failed to update employee" }),
+      JSON.stringify({ ok: false, message: "Failed to update employee" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

@@ -49,10 +49,7 @@ export default function EditDivisionForm({
       try {
         const response = await fetch(`/api/division/${divisionId}`);
         const result = await response.json();
-
-        // Pastikan result berupa objek tunggal, bukan array
         const data = Array.isArray(result) ? result[0] : result;
-
         setDivision(data);
         form.reset({ name: data?.name ?? "" });
       } catch (error) {
@@ -63,22 +60,22 @@ export default function EditDivisionForm({
     fetchDivision();
   }, [divisionId, form]);
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
       const res = await fetch(`/api/division/${divisionId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(values),
       });
-
+      const data = await res.json()
       if (!res.ok) {
-        toast.error("Division updated failed");
+        toast.error(data.message);
         return;
       }
 
-      toast.success("Division updated successfully");
+      toast.success(data.message);
       router.push("/division");
       router.refresh();
     } catch (error) {

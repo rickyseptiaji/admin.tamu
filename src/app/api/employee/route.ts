@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const { fullName, email, phone, address, division } = body;
     if (!fullName || !email || !phone || !division) {
       return new Response(
-        JSON.stringify({ error: "All fields are required" }),
+        JSON.stringify({ message: "All fields are required" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     });
 
     return new Response(
-      JSON.stringify({ ok: true, message: "Employee created" }),
+      JSON.stringify({ message: "Employee created" }),
       {
         status: 201,
         headers: { "Content-Type": "application/json" },
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating employee:", error);
     return new Response(
-      JSON.stringify({ ok: false, error: "Failed to create employee" }),
+      JSON.stringify({ message: "Failed to create employee" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -99,7 +99,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching employees:", error);
     return new Response(
-      JSON.stringify({ error: "Failed to fetch employees" }),
+      JSON.stringify({ message: "Failed to fetch employees" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

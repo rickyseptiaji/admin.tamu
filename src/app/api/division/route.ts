@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     if (!name || typeof name !== "string") {
       return new Response(
-        JSON.stringify({ error: "Division name is required" }),
+        JSON.stringify({ message: "Division name is required" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 
     await updateDoc(docRef, { id: docRef.id });
     return new Response(
-      JSON.stringify({ok: true, message: "Division created", id: docRef.id }),
+      JSON.stringify({ message: "Division created", id: docRef.id }),
       {
         status: 201,
         headers: { "Content-Type": "application/json" },
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error creating division:", error);
     return new Response(
-      JSON.stringify({ok: false, error: "Failed to create division" }),
+      JSON.stringify({ message: "Failed to create division" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -69,7 +69,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching divisions:", error);
     return new Response(
-      JSON.stringify({ error: "Failed to fetch divisions" }),
+      JSON.stringify({ message: "Failed to fetch divisions" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

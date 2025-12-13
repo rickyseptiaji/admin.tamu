@@ -59,26 +59,25 @@ export default function EditEmployeeForm({
       division: "",
     },
   });
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(values: z.infer<typeof FormSchema>) {
     async function updateEmployee() {
       try {
-        const response = await fetch(`/api/employee/${employeeId}`, {
+        const res = await fetch(`/api/employee/${employeeId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(values),
         });
 
-        if (!response.ok) {
-          toast.error("Employee updated failed");
+        const data = await res.json();
+        if (!res.ok) {
+          toast.error(data.message);
           return;
         }
-
-        const updatedEmployee = await response.json();
-        setEmployee(updatedEmployee);
+        setEmployee(data);
         router.push("/division");
-        toast.success("Employee updated successfully");
+        toast.success(data.message);
       } catch (error) {
         toast.error("Failed to update employee");
       }

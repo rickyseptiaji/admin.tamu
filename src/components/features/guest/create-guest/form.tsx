@@ -13,7 +13,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 const FormSchema = z.object({
   fullName: z.string().min(2, {
     message: "Full Name must be at least 2 characters.",
@@ -41,23 +42,23 @@ export default function CreateGuestForm() {
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
       const { fullName, email, phone, companyName } = values;
-      const res = await fetch("/api/division", {
+      const res = await fetch("/api/guest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({fullName, email, phone, companyName}),
+        body: JSON.stringify({ fullName, email, phone, companyName }),
       });
 
       const data = await res.json();
-      if (!data.ok) {
-        toast.error("Division created failed");
+      if (!res.ok) {
+        toast.error(data.message);
         return;
       }
-      toast.success("Division created successfully");
-      router.push("/division");
+      toast.success(data.message);
+      router.push("/guest");
     } catch (error) {
-      toast.error("Failed to create division");
+      toast.error("Failed to create guest");
     }
   }
   return (
@@ -89,14 +90,18 @@ export default function CreateGuestForm() {
             </FormItem>
           )}
         />
-        <FormField
+     <FormField
           control={form.control}
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
+              <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input placeholder="Phone" {...field} />
+                <PhoneInput
+                  country={"id"}
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

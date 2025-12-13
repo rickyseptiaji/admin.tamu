@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     );
     const user = userCredential.user;
     if (!user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
+      return new Response(JSON.stringify({ message: "User not found" }), {
         status: 404,
       });
     }
@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        ok: true,
         message: "Register successful",
       },
       { status: 201 }
@@ -34,8 +33,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return new Response(
       JSON.stringify({
-        ok: false,
-        error: "Registration failed, please try again",
+        message: "Registration failed, please try again",
       }),
       { status: 500 }
     );

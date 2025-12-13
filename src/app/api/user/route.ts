@@ -49,8 +49,9 @@ export async function POST(req: NextRequest) {
       createdAt: serverTimestamp(),
     });
     return NextResponse.json({
-      ok: true,
       message: "Berhasil",
+    }, {
+      status: 201
     });
   } catch (error: any) {
     if (error.code === "auth/email-already-in-use") {

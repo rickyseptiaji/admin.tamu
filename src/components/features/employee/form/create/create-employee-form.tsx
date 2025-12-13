@@ -54,21 +54,21 @@ export default function CreateEmployeeForm() {
       division: "",
     },
   });
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
-      const { fullName, email, phone, address, division } = data;
-      const response = await fetch("/api/employee", {
+      const res = await fetch("/api/employee", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fullName, email, phone, address, division }),
+        body: JSON.stringify(values),
       });
-      if (!response.ok) {
-        toast.error("Employee created failed");
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.message);
         return;
       }
-      toast.success("Employee created successfully");
+      toast.success(data.message);
       router.push("/employee");
     } catch (error) {
       toast.error("Failed to submit form.");

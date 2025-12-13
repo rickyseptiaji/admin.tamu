@@ -40,11 +40,11 @@ export default function CreateDivisionForm() {
       });
 
       const data = await res.json();
-      if (!data.ok) {
-        toast.error("Division created failed");
+      if (!res.ok) {
+        toast.error(data.message);
         return;
       }
-      toast.success("Division created successfully");
+      toast.success(data.message);
       router.push("/division");
     } catch (error) {
       toast.error("Failed to create division");

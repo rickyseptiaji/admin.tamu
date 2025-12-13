@@ -10,7 +10,7 @@ export async function PUT(request: Request, { params }: any) {
 
     if (!name || typeof name !== "string") {
       return new Response(
-        JSON.stringify({ error: "Division name is required" }),
+        JSON.stringify({ message: "Division name is required" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -25,7 +25,7 @@ export async function PUT(request: Request, { params }: any) {
     });
 
     return new Response(
-      JSON.stringify({ ok: true, message: "Division updated successfully" }),
+      JSON.stringify({ message: "Division updated successfully" }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -33,7 +33,7 @@ export async function PUT(request: Request, { params }: any) {
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ ok: false, message: "Failed to update division" }),
+      JSON.stringify({message: "Failed to update division" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -52,7 +52,7 @@ export async function GET(
     const docRef = doc(db, "divisions", id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
-      return new Response(JSON.stringify({ error: "Divisions not found" }), {
+      return new Response(JSON.stringify({ message: "Divisions not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
@@ -63,7 +63,7 @@ export async function GET(
     });
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Failed to fetch divisions" }),
+      JSON.stringify({ message: "Failed to fetch divisions" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

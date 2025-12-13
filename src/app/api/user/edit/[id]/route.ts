@@ -26,7 +26,10 @@ export async function GET(
   }
 }
 
-export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
     const { id } = await context.params;
     const body = await req.json();
@@ -47,9 +50,13 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
       updatedAt: new Date(),
     });
 
-    return NextResponse.json({ ok: true, message: "User updated successfully" });
+    return NextResponse.json(
+      { message: "User updated successfully" },
+      {
+        status: 201,
+      }
+    );
   } catch (error: any) {
-    return NextResponse.json({ ok: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
-

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const userDocRef = doc(db, "users", user.uid);
     const userDocSnap = await getDoc(userDocRef);
     if (!userDocSnap.exists()) {
-      return new NextResponse(JSON.stringify({ error: "User not found" }), {
+      return new NextResponse(JSON.stringify({ message: "User not found" }), {
         status: 404,
       });
     }
@@ -24,13 +24,13 @@ export async function POST(req: NextRequest) {
     const userData = userDocSnap.data();
     if (userData.role !== "admin") {
       return new NextResponse(
-        JSON.stringify({ error: "Unauthorized access" }),
+        JSON.stringify({ message: "Unauthorized access" }),
         { status: 403 }
       );
     }
     const userToken = await userCredential.user.getIdToken();
     const res = new NextResponse(
-      JSON.stringify({ ok: true, message: "Login successful" }),
+      JSON.stringify({ message: "Login successful" }),
       {
         status: 200,
       }
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     return res;
   } catch (error: any) {
     return new NextResponse(
-      JSON.stringify({ ok: false, error: "Login failed, please try again" }),
+      JSON.stringify({ message: "Login failed, please try again" }),
       { status: 500 }
     );
   }

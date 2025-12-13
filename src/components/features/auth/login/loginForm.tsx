@@ -43,10 +43,10 @@ export function LoginForm() {
     const data = await res.json();
 
     if (!data.ok) {
-      toast.error(data.error || "Login gagal, coba lagi");
+      toast.error(data.message);
       return;
     }
-    toast.success("Login Berhasil");
+    toast.success(data.message);
     router.push("/dashboard");
   }
 

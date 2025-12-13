@@ -44,10 +44,10 @@ export function RegisterForm() {
     const data = await res.json();
 
     if (!data.ok) {
-      toast.error(data.error || "Register gagal, coba lagi");
+      toast.error(data.message);
       return;
     }
-    toast.success("Register Berhasil");
+    toast.success(data.message);
     router.push("/login");
   }
   return (

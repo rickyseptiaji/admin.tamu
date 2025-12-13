@@ -1,5 +1,12 @@
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "@firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { createUserWithEmailAndPassword } from "@firebase/auth";
+import {
+  collection,
+  doc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+} from "@firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -19,5 +26,44 @@ export async function GET(req: NextRequest) {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { email, password, fullName, companyName, phone } = body;
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    await setDoc(doc(db, "users", user.uid), {
+      userId: user.uid,
+      fullName,
+      companyName,
+      phone,
+      email,
+      role: "user",
+      createdAt: serverTimestamp(),
+    });
+    return NextResponse.json({
+      ok: true,
+      message: "Berhasil",
+    });
+  } catch (error: any) {
+    if (error.code === "auth/email-already-in-use") {
+      return NextResponse.json(
+        { message: "Email sudah terdaftar" },
+        { status: 400 }
+      );
+    }
+    return NextResponse.json(
+      {
+        message: "Internal server error",
+      },
+      { status: 500 }
+    );
   }
 }

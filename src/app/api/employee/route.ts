@@ -2,8 +2,10 @@ import { db } from "@/lib/firebase";
 import {
   addDoc,
   collection,
+  doc,
   getDocs,
   serverTimestamp,
+  setDoc,
 } from "@firebase/firestore";
 
 export async function POST(request: Request) {
@@ -20,7 +22,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const docRef = await addDoc(collection(db, "employees"), {
+    const docRef = doc(collection(db, "employees"));
+    await setDoc(docRef, {
+      id: docRef.id,
       fullName,
       email,
       phone,
@@ -30,7 +34,7 @@ export async function POST(request: Request) {
     });
 
     return new Response(
-      JSON.stringify({ ok: true, message: "Employee created", id: docRef.id }),
+      JSON.stringify({ ok: true, message: "Employee created" }),
       {
         status: 201,
         headers: { "Content-Type": "application/json" },

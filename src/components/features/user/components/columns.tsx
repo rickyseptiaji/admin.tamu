@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { TableActions } from "../../shared/TableActions";
 
 
 export const userColumns: ColumnDef<any>[] = [
@@ -31,15 +32,16 @@ export const userColumns: ColumnDef<any>[] = [
     header: "No HP",
     cell: ({ row }) => row.original.phone ?? "-",
   },
-  // {
-  //   id: "actions",
-  //   header: "Actions",
-  //   cell: ({ row }) => (
-  //     <TableActions
-  //       id={row.original.id}
-  //       editPath="/employee/edit"
-  //       deletePath="employee"
-  //     />
-  //   ),
-  // },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <TableActions
+        id={row.original.id}
+        editPath="/user/edit"
+        requestPath="/user/req"
+        deletePath="user"
+      />
+    ),
+  },
 ];

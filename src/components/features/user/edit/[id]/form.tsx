@@ -26,9 +26,11 @@ import PhoneInput from "react-phone-number-input";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Must format email" }),
-  password: z.string().min(8, {
-    message: "password must be at least 2 characters.",
-  }),
+  password: z
+    .string()
+    .min(8, { message: "password must be at least 8 characters." })
+    .optional()
+    .or(z.literal("")), 
   fullName: z
     .string()
     .min(2, { message: "full name must be at least 2 characters." }),
@@ -40,8 +42,9 @@ const FormSchema = z.object({
     .min(10, { message: "phone must be at least 10 characters." }),
 });
 
-export default function CreateUserForm() {
+export default function EditUserForm({ userId }: { userId: string }) {
   const router = useRouter();
+  const [editPassword, setEditPassword] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -52,32 +55,43 @@ export default function CreateUserForm() {
       phone: "",
     },
   });
+  useEffect(() => {
+    async function fetchUser() {
+      const res = await fetch(`/api/user/edit/${userId}`);
+      const data = await res.json();
+
+      if (data) {
+        form.reset({
+          email: data.auth.email,
+          password: "",
+          fullName: data.data?.fullName || "",
+          companyName: data.data?.companyName || "",
+          phone: data.data?.phone || "",
+        });
+      }
+    }
+
+    fetchUser();
+  }, [userId, form]);
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
-      const { email, password, fullName, companyName, phone } = values;
-      const res = await fetch("/api/user", {
-        method: "POST",
+      const res = await fetch(`/api/user/edit/${userId}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          password,
-          fullName,
-          companyName,
-          phone,
-        }),
+        body: JSON.stringify(values),
       });
 
       const data = await res.json();
       if (!data.ok) {
-        toast.error(data.message || "User created failed");
+        toast.error(data.message || "User updated failed");
         return;
       }
-      toast.success("User created successfully");
+      toast.success("User updated successfully");
       router.push("/user");
     } catch (error) {
-      toast.error("Failed to create user");
+      toast.error("Failed to updated user");
     }
   }
   return (
@@ -96,15 +110,52 @@ export default function CreateUserForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
+            <FormItem className="relative">
+              <div className="flex justify-between items-center">
+                <FormLabel>Password</FormLabel>
+
+                {!editPassword ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditPassword(true)}
+                  >
+                    Ubah
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      setEditPassword(false);
+                      form.setValue("password", "");
+                    }}
+                  >
+                    Batal
+                  </Button>
+                )}
+              </div>
+
               <FormControl>
-                <Input placeholder="Password" {...field} />
+                <Input
+                  type="password"
+                  disabled={!editPassword}
+                  placeholder={
+                    editPassword
+                      ? "Masukkan password baru"
+                      : "Password tidak ditampilkan"
+                  }
+                  {...field}
+                />
               </FormControl>
+
               <FormMessage />
             </FormItem>
           )}

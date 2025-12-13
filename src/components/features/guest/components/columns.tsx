@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { TableActions } from "../../shared/TableActions";
 
 
 export const guestColumns: ColumnDef<any>[] = [
@@ -27,15 +28,15 @@ export const guestColumns: ColumnDef<any>[] = [
     accessorKey: "phone",
     header: "Phone",
   },
-  // {
-  //   id: "actions",
-  //   header: "Actions",
-  //   cell: ({ row }) => (
-  //     <TableActions
-  //       id={row.original.id}
-  //       editPath="/employee/edit"
-  //       deletePath="employee"
-  //     />
-  //   ),
-  // },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <TableActions
+        id={row.original.id}
+        editPath="/guest/edit"
+        deletePath="guest"
+      />
+    ),
+  },
 ];

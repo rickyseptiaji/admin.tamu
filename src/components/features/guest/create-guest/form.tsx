@@ -15,8 +15,15 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  division: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  fullName: z.string().min(2, {
+    message: "Full Name must be at least 2 characters.",
+  }),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  phone: z.string().min(10, {
+    message: "phone must be at least 10 characters.",
+  }),
+  companyName: z.string().min(2, {
+    message: "company name must be at least 2 characters.",
   }),
 });
 
@@ -25,18 +32,21 @@ export default function CreateGuestForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      division: "",
+      fullName: "",
+      email: "",
+      phone: "",
+      companyName: "",
     },
   });
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
-      const { division } = values;
+      const { fullName, email, phone, companyName } = values;
       const res = await fetch("/api/division", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: division }),
+        body: JSON.stringify({fullName, email, phone, companyName}),
       });
 
       const data = await res.json();
@@ -55,12 +65,51 @@ export default function CreateGuestForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="division"
+          name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Division</FormLabel>
+              <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="Division" {...field} />
+                <Input placeholder="Full Name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="Email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <Input placeholder="Phone" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="companyName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Company Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

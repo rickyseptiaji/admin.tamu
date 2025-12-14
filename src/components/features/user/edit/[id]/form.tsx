@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
+import { LoadingSpinner } from "@/components/features/shared/LoadingSpinner";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Must format email" }),
@@ -30,7 +31,7 @@ const FormSchema = z.object({
     .string()
     .min(8, { message: "password must be at least 8 characters." })
     .optional()
-    .or(z.literal("")), 
+    .or(z.literal("")),
   fullName: z
     .string()
     .min(2, { message: "full name must be at least 2 characters." }),
@@ -45,6 +46,7 @@ const FormSchema = z.object({
 export default function EditUserForm({ userId }: { userId: string }) {
   const router = useRouter();
   const [editPassword, setEditPassword] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -57,17 +59,24 @@ export default function EditUserForm({ userId }: { userId: string }) {
   });
   useEffect(() => {
     async function fetchUser() {
-      const res = await fetch(`/api/user/edit/${userId}`);
-      const data = await res.json();
+      try {
+        setInitialLoading(true);
+        const res = await fetch(`/api/user/edit/${userId}`);
+        const data = await res.json();
 
-      if (data) {
-        form.reset({
-          email: data.auth.email,
-          password: "",
-          fullName: data.data?.fullName || "",
-          companyName: data.data?.companyName || "",
-          phone: data.data?.phone || "",
-        });
+        if (data) {
+          form.reset({
+            email: data.auth.email,
+            password: "",
+            fullName: data.data?.fullName || "",
+            companyName: data.data?.companyName || "",
+            phone: data.data?.phone || "",
+          });
+        }
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setInitialLoading(false);
       }
     }
 
@@ -93,6 +102,13 @@ export default function EditUserForm({ userId }: { userId: string }) {
     } catch (error) {
       toast.error("Failed to updated user");
     }
+  }
+  if (initialLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
   return (
     <Form {...form}>

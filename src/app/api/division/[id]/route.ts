@@ -47,7 +47,6 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  console.log(id);
   try {
     const docRef = doc(db, "divisions", id);
     const docSnap = await getDoc(docRef);

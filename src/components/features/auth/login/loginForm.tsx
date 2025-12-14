@@ -42,7 +42,7 @@ export function LoginForm() {
 
     const data = await res.json();
 
-    if (!data.ok) {
+    if (!res.ok) {
       toast.error(data.message);
       return;
     }

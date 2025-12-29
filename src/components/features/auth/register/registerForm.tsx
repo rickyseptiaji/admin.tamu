@@ -20,9 +20,11 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { LoadingSpinner } from "../../shared/LoadingSpinner";
 
 export function RegisterForm() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof authSchema>>({
@@ -34,21 +36,28 @@ export function RegisterForm() {
   });
   async function onSubmit(values: z.infer<typeof authSchema>) {
     const { email, password } = values;
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
 
-    if (!res.ok) {
-      toast.error(data.message);
-      return;
+      if (!res.ok) {
+        toast.error(data.message);
+        return;
+      }
+      toast.success(data.message);
+      router.push("/login");
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-    toast.success(data.message);
-    router.push("/login");
   }
   return (
     <Form {...form}>
@@ -102,8 +111,15 @@ export function RegisterForm() {
             />
           </div>
           <div className="flex flex-col gap-3">
-            <Button type="submit" className="w-full">
-              Register
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <LoadingSpinner className="w-4 h-4" />
+                  <span>Register...</span>
+                </div>
+              ) : (
+                "Register"
+              )}
             </Button>
           </div>
         </div>

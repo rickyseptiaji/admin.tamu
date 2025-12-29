@@ -1,15 +1,24 @@
-import { MainLayout } from "@/layout/mainLayout";
-import { SectionCards } from "@/components/features/shared/section-cards";
-import { ChartAreaInteractive } from "@/components/features/shared/chart-area-interactive";
 
-export default function Page() {
-  // This is the main dashboard page
-  return (
-    <MainLayout title="Dashboard">
-      <SectionCards />
-      <div className="px-4 lg:px-6">
-        <ChartAreaInteractive />
-      </div>
-    </MainLayout>
-  );
+import { collection, getCountFromServer } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import Dashboard from "@/components/features/dashboard/page";
+
+export default async function Page() {
+  const [user, guest, employee, division] =
+    await Promise.all([
+      getCountFromServer(collection(db, "users")),
+      getCountFromServer(collection(db, "guests")),
+      getCountFromServer(collection(db, "employees")),
+      getCountFromServer(collection(db, "divisions")),
+    ]);
+
+  const data = {
+    users: user.data().count,
+    guests: guest.data().count,
+    employees: employee.data().count,
+    divisions: division.data().count,
+  };
+
+  return <Dashboard data={data} />;
 }
+

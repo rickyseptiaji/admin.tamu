@@ -18,6 +18,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import useAuthStore from "@/store/auth.store";
 
 export function LoginForm() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export function LoginForm() {
       toast.error(data.message);
       return;
     }
+    useAuthStore.getState().login(data.user);
     toast.success(data.message);
     router.push("/dashboard");
   }

@@ -30,7 +30,13 @@ export async function POST(req: NextRequest) {
     }
     const userToken = await userCredential.user.getIdToken();
     const res = new NextResponse(
-      JSON.stringify({ message: "Login successful" }),
+      JSON.stringify({
+        message: "Login successful",
+        user: {
+          id: user.uid,
+          email: user.email,
+        },
+      }),
       {
         status: 200,
       }

@@ -90,7 +90,21 @@ export default function CreateGuestForm() {
             </FormItem>
           )}
         />
-     <FormField
+
+        <FormField
+          control={form.control}
+          name="companyName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Company Name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
           control={form.control}
           name="phone"
           render={({ field }) => (
@@ -102,19 +116,6 @@ export default function CreateGuestForm() {
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="companyName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Company Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Company Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

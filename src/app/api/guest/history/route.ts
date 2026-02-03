@@ -5,22 +5,14 @@ import {
   getDoc,
   getDocs,
   query,
+  Timestamp,
   where,
 } from "@firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
-function formatDate(timestamp: any): string {
-  if (!timestamp) return "";
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-  return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}/${date.getFullYear()} ${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-}
+
 export async function GET(req: NextRequest) {
   try {
-    const q = query(collection(db, "visits"), where("guestId", "!=", null));
+    const q = query(collection(db, "visits"), where("guestId", "!=", null),);
     const visitSnapshot = await getDocs(q);
     const visitData = await Promise.all(
       visitSnapshot.docs.map(async (e) => {
@@ -28,7 +20,9 @@ export async function GET(req: NextRequest) {
           employeeId?: string;
           description?: string;
           guestId?: string;
-          createdAt?: any;
+          checkIn?: Timestamp | null;
+          checkOut?: Timestamp | null;
+          duration?: number | null;
         };
 
         let employee = null;
@@ -57,7 +51,9 @@ export async function GET(req: NextRequest) {
         return {
           id: e.id,
           description: data.description,
-          createdAt: formatDate(data.createdAt),
+          checkIn: data.checkIn,
+          checkOut: data.checkOut,
+          duration: data.duration,
           employee,
           guest,
         };

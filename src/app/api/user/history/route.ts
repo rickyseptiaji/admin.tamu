@@ -1,3 +1,4 @@
+import { formatDate } from "@/hooks/formatDate";
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -7,18 +8,9 @@ import {
   query,
   where,
 } from "@firebase/firestore";
-import { NextResponse } from "next/server";
-function formatDate(timestamp: any): string {
-  if (!timestamp) return "";
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-  return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}/${date.getFullYear()} ${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-}
-export async function GET() {
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
   try {
     const q = query(collection(db, "visits"), where("userId", "!=", null));
     const visitSnapshot = await getDocs(q);
@@ -28,6 +20,9 @@ export async function GET() {
           employeeId?: string;
           description?: string;
           userId?: string;
+          checkIn?: any;
+          checkOut?: any;
+          duration?: any;
           createdAt?: any;
         };
 
@@ -57,11 +52,13 @@ export async function GET() {
         return {
           id: e.id,
           description: data.description,
-          createdAt: formatDate(data.createdAt),
+          checkIn: data.checkIn,
+          checkOut: data.checkOut,
+          duration: data.duration,
           employee,
           user,
         };
-      })
+      }),
     );
     return new NextResponse(JSON.stringify(visitData), {
       status: 200,

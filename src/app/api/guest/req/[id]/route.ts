@@ -17,6 +17,9 @@ export async function POST(
       guestId: id,
       employeeId,
       description,
+      checkIn: serverTimestamp(),
+      checkOut: null,
+      duration: null,
       createdAt: serverTimestamp(),
     });
     return NextResponse.json(

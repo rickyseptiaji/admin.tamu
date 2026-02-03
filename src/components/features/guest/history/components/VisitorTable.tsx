@@ -57,8 +57,6 @@ import {
 } from "@tabler/icons-react";
 import { Label } from "@/components/ui/label";
 import { DraggableRow } from "../../../shared/data-table";
-import { useRouter } from "next/navigation";
-import { LoadingSpinner } from "../../../shared/LoadingSpinner";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -81,11 +79,9 @@ interface TableProps {
 
 interface TableState {
   data: TableProps[];
-  isLoading: boolean;
 }
 
-export function VisitorGuestTable({ data, isLoading }: TableState) {
-  const router = useRouter();
+export function VisitorGuestTable({ data  }: TableState) {
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -168,11 +164,6 @@ export function VisitorGuestTable({ data, isLoading }: TableState) {
         </div>
       </div> */}
 
-      {isLoading && data.length === 0 ? (
-        <div className="flex h-full items-center justify-center">
-          <LoadingSpinner />
-        </div>
-      ) : (
         <TabsContent
           value="outline"
           className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
@@ -373,7 +364,6 @@ export function VisitorGuestTable({ data, isLoading }: TableState) {
             </div>
           </div>
         </TabsContent>
-      )}
 
       {/* Dummy tabs */}
       <TabsContent

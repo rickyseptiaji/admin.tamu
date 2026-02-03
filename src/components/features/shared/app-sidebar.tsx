@@ -38,10 +38,10 @@ const data = {
           title: "Laporan",
           url: "/user/laporan",
         },
-        {
-          title: "History",
-          url: "/user/history",
-        },
+        // {
+        //   title: "History",
+        //   url: "/user/history",
+        // },
       ],
     },
     {
@@ -58,10 +58,10 @@ const data = {
           title: "Laporan",
           url: "/guest/laporan",
         },
-        {
-          title: "History",
-          url: "/guest/history",
-        },
+        // {
+        //   title: "History",
+        //   url: "/guest/history",
+        // },
       ],
     },
     {

@@ -1,5 +1,6 @@
+import { TableActions } from "@/components/features/shared/TableActions";
+import { formatDate } from "@/hooks/formatDate";
 import { ColumnDef } from "@tanstack/react-table";
-import { TableActions } from "../../../shared/TableActions";
 
 export const visitorGuestColumns: ColumnDef<any>[] = [
   {
@@ -21,29 +22,51 @@ export const visitorGuestColumns: ColumnDef<any>[] = [
     cell: ({ row }) => row.original.employee?.fullName ?? "-",
   },
   {
+    accessorKey: "guest.fullName",
+    header: "Visitor Name",
+    cell: ({ row }) => row.original.guest?.fullName ?? "-",
+  },
+  {
     accessorKey: "description",
     header: "Description",
   },
+
   {
-    accessorKey: "user.fullName",
-    header: "Visitor Name",
-    cell: ({ row }) => row.original.user?.fullName ?? "-",
+    accessorKey: "checkIn",
+    header: "Check In",
+    cell: ({ row }) => {
+      const checkIn = row.original.checkIn;
+      formatDate(checkIn);
+      return formatDate(checkIn);
+    },
   },
   {
-    accessorKey: "createdAt",
-    header: "Date",
-    cell: ({ row }) => row.original.createdAt ?? "-",
+    accessorKey: "checkOut",
+    header: "Check Out",
+    cell: ({ row }) => {
+      const checkOut = row.original.checkOut;
+      formatDate(checkOut);
+      return formatDate(checkOut);
+    },
+  },
+  {
+    accessorKey: "duration",
+    header: "Duration",
+    cell: ({ row }) => {
+      const duration = row.original.duration;
+      return duration ? `${duration} minutes` : "-";
+    },
   },
 
-  // {
-  //   id: "actions",
-  //   header: "Actions",
-  //   cell: ({ row }) => (
-  //     <TableActions
-  //       id={row.original.id}
-  //       editPath="/employee/edit"
-  //       deletePath="employee"
-  //     />
-  //   ),
-  // },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <TableActions
+        id={row.original.id}
+        editPath="/guest/history/"
+        deletePath="guest/history"
+      />
+    ),
+  },
 ];

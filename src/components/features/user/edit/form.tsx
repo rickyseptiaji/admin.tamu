@@ -8,13 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,7 +17,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import { LoadingSpinner } from "@/components/features/shared/LoadingSpinner";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Must format email" }),
@@ -43,48 +36,33 @@ const FormSchema = z.object({
     .min(10, { message: "phone must be at least 10 characters." }),
 });
 
-export default function EditUserForm({ userId }: { userId: string }) {
+export default function EditUserForm({ data }: { data: any }) {
   const router = useRouter();
-  const [editPassword, setEditPassword] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      email: "",
+      email: data?.auth?.email || "",
       password: "",
-      fullName: "",
-      companyName: "",
-      phone: "",
+      fullName: data?.data?.fullName || "",
+      companyName: data?.data?.companyName || "",
+      phone: data?.data?.phone || "",
     },
   });
   useEffect(() => {
-    async function fetchUser() {
-      try {
-        setInitialLoading(true);
-        const res = await fetch(`/api/user/edit/${userId}`);
-        const data = await res.json();
-
-        if (data) {
-          form.reset({
-            email: data.auth.email,
-            password: "",
-            fullName: data.data?.fullName || "",
-            companyName: data.data?.companyName || "",
-            phone: data.data?.phone || "",
-          });
-        }
-      } catch (error) {
-        console.log("error", error);
-      } finally {
-        setInitialLoading(false);
-      }
+    if (data) {
+      form.reset({
+        email: data?.auth?.email || "",
+        password: "",
+        fullName: data?.data?.fullName || "",
+        companyName: data?.data?.companyName || "",
+        phone: data?.data?.phone || "",
+      });
     }
-
-    fetchUser();
-  }, [userId, form]);
+  }, [data, form]);
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
-      const res = await fetch(`/api/user/edit/${userId}`, {
+      const res = await fetch(`/api/user/${data?.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -92,9 +70,9 @@ export default function EditUserForm({ userId }: { userId: string }) {
         body: JSON.stringify(values),
       });
 
-      const data = await res.json();
-      if (!data.ok) {
-        toast.error(data.message || "User updated failed");
+      const response = await res.json();
+      if (!response.ok) {
+        toast.error(response.message || "User updated failed");
         return;
       }
       toast.success("User updated successfully");
@@ -102,13 +80,6 @@ export default function EditUserForm({ userId }: { userId: string }) {
     } catch (error) {
       toast.error("Failed to updated user");
     }
-  }
-  if (initialLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
   }
   return (
     <Form {...form}>
@@ -120,7 +91,7 @@ export default function EditUserForm({ userId }: { userId: string }) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email" {...field} />
+                <Input placeholder="Email" {...field} disabled={!isEditing} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -134,41 +105,21 @@ export default function EditUserForm({ userId }: { userId: string }) {
             <FormItem className="relative">
               <div className="flex justify-between items-center">
                 <FormLabel>Password</FormLabel>
-
-                {!editPassword ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditPassword(true)}
-                  >
-                    Ubah
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      setEditPassword(false);
-                      form.setValue("password", "");
-                    }}
-                  >
-                    Batal
-                  </Button>
-                )}
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  onClick={() => setIsEditing(!isEditing)}
+                >
+                  {isEditing ? "Cancel Edit" : "Edit Password"}
+                </Button>
               </div>
 
               <FormControl>
                 <Input
-                  type="password"
-                  disabled={!editPassword}
-                  placeholder={
-                    editPassword
-                      ? "Masukkan password baru"
-                      : "Password tidak ditampilkan"
-                  }
+                  placeholder="Password"
                   {...field}
+                  disabled={!isEditing}
                 />
               </FormControl>
 
@@ -183,7 +134,7 @@ export default function EditUserForm({ userId }: { userId: string }) {
             <FormItem>
               <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="Full Name" {...field} />
+                <Input placeholder="Full Name" {...field} disabled={!isEditing} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -196,7 +147,7 @@ export default function EditUserForm({ userId }: { userId: string }) {
             <FormItem>
               <FormLabel>Company Name</FormLabel>
               <FormControl>
-                <Input placeholder="Company Name" {...field} />
+                <Input placeholder="Company Name" {...field} disabled={!isEditing} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -214,6 +165,7 @@ export default function EditUserForm({ userId }: { userId: string }) {
                   country={"id"}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
+                  disabled={!isEditing}
                 />
               </FormControl>
               <FormMessage />
@@ -257,7 +209,17 @@ export default function EditUserForm({ userId }: { userId: string }) {
             </FormItem>
           )}
         /> */}
-        <Button type="submit">Submit</Button>
+         {isEditing && <Button type="submit">Submit</Button>}
+          {!isEditing && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditing(true)}
+              className="mb-4"
+            >
+              Edit
+            </Button>
+          )}
       </form>
     </Form>
   );

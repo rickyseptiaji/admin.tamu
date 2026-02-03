@@ -71,7 +71,6 @@ import { LoadingSpinner } from "../../../shared/LoadingSpinner";
 import { DraggableRow } from "../../../shared/data-table";
 
 export function LaporanGuestTable() {
-  const router = useRouter();
   const [data, setData] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [globalFilter, setGlobalFilter] = React.useState("");
@@ -104,6 +103,7 @@ export function LaporanGuestTable() {
         throw new Error("Failed to fetch guest data");
       }
       const data = await response.json();
+      console.log("Fetched guest data:", data);
       setData(data);
     } catch (error) {
       console.error("Error fetching guest data:", error);
@@ -136,7 +136,7 @@ export function LaporanGuestTable() {
         row.original.phone.toLowerCase().includes(value)
       );
     },
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => row.guestId.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,

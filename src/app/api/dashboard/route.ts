@@ -47,6 +47,5 @@ export async function GET(req: Request) {
   }))
 
 
-  console.log(result)
   return NextResponse.json(result)
 }

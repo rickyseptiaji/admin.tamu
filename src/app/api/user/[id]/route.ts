@@ -1,15 +1,12 @@
-import { db } from "@/lib/firebase";
 import { adminAuth, adminDB } from "@/lib/firebase-admin";
-import { getAuth } from "@firebase/auth";
-import { doc } from "@firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
+    const { id } = await params;
     const user = await adminAuth.getUser(id);
     const snap = await adminDB.collection("users").doc(id).get();
     const userData = snap.exists ? snap.data() : null;
@@ -28,10 +25,10 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
+    const { id } = await params;
     const body = await req.json();
 
     const { email, password, fullName, companyName, phone } = body;

@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     );
     const user = userCredential.user;
     await setDoc(doc(db, "users", user.uid), {
-      userId: user.uid,
+      id: user.uid,
       fullName,
       companyName,
       phone,

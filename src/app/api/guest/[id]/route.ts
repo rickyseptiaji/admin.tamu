@@ -8,7 +8,6 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-
     const docRef = doc(db, "guests", id);
     const docSnap = await getDoc(docRef);
 
@@ -31,10 +30,11 @@ export async function GET(
   }
 }
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await req.json();
-    const { id, email, fullName, companyName, phone } = body;
+    const {  email, fullName, companyName, phone } = body;
+    const { id } = await params;
     await updateDoc(doc(db, "guests", id), {
       email,
       fullName,

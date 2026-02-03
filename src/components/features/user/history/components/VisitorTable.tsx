@@ -81,11 +81,9 @@ interface TableProps {
 
 interface TableState {
   data: TableProps[];
-  isLoading: boolean;
 }
 
-export function VisitorUserTable({ data, isLoading }: TableState) {
-  const router = useRouter();
+export function VisitorUserTable({ data }: TableState) {
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -168,11 +166,6 @@ export function VisitorUserTable({ data, isLoading }: TableState) {
         </div>
       </div> */}
 
-      {isLoading && data.length === 0 ? (
-        <div className="flex h-full items-center justify-center">
-          <LoadingSpinner />
-        </div>
-      ) : (
         <TabsContent
           value="outline"
           className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
@@ -373,7 +366,6 @@ export function VisitorUserTable({ data, isLoading }: TableState) {
             </div>
           </div>
         </TabsContent>
-      )}
 
       {/* Dummy tabs */}
       <TabsContent

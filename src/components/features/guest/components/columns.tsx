@@ -34,7 +34,7 @@ export const guestColumns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <TableActions
         id={row.original.id}
-        editPath="/guest/edit"
+        viewPath="/guest/view"
         requestPath="/guest/req"
         deletePath="guest"
       />

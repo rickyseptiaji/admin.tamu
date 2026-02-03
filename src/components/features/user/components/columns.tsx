@@ -1,7 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TableActions } from "../../shared/TableActions";
 
-
 export const userColumns: ColumnDef<any>[] = [
   {
     id: "no",
@@ -38,7 +37,7 @@ export const userColumns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <TableActions
         id={row.original.id}
-        editPath="/user/edit"
+        viewPath="/user/view"
         requestPath="/user/req"
         deletePath="user"
       />

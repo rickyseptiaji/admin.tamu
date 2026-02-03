@@ -24,6 +24,7 @@ import { useState } from "react";
 type TableActionsProps = {
   id: string | number;
   editPath?: string;
+  viewPath?: string;
   requestPath?: string;
   deletePath?: string;
   printPath?: string;
@@ -32,16 +33,17 @@ type TableActionsProps = {
 export const TableActions = ({
   id,
   editPath,
+  viewPath,
   requestPath,
   deletePath,
   printPath,
 }: TableActionsProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const handleView = () => router.push(`${viewPath}/${id}`);
   const handleEdit = () => router.push(`${editPath}/${id}`);
   const handleRequest = () => router.push(`${requestPath}/${id}`);
   const handlePrint = () => router.push(`${printPath}/${id}`);
-
   const handleDelete = async () => {
     if (!deletePath) return;
 
@@ -69,7 +71,12 @@ export const TableActions = ({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+          {viewPath && (
+            <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+          )}
+          {editPath && (
+            <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+          )}
           {requestPath && (
             <DropdownMenuItem onClick={handleRequest}>Request</DropdownMenuItem>
           )}
@@ -107,6 +114,7 @@ export const TableActions = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </>
   );
 };

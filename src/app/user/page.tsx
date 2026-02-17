@@ -1,8 +1,9 @@
-import UserPage from "@/components/features/user/page";
+import UserClient from "@/components/features/user/page";
+
 
 async function getUsers() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user`, {
-    cache: "no-store",
+    next: { revalidate: 10 },
   });
 
   return res.json();
@@ -10,5 +11,5 @@ async function getUsers() {
 
 export default async function Page() {
   const users = await getUsers();
-  return <UserPage users={users} />;
+  return <UserClient users={users} />;
 }

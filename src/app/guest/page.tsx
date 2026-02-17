@@ -2,6 +2,7 @@ import GuestPage from "@/components/features/guest/page";
 
 async function getGuests() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/guest`, {
+    next: { revalidate: 60 },
     cache: "no-store",
   });
 

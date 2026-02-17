@@ -81,7 +81,7 @@ export function UserTable({ users }: { users: any[] }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
@@ -281,7 +281,7 @@ export function UserTable({ users }: { users: any[] }) {
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     ))}

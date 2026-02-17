@@ -1,33 +1,30 @@
 "use client";
 import { MainLayout } from "@/layout/mainLayout";
 import { EmployeeTable } from "./components/EmployeeTable";
-import React, { useEffect } from "react";
+import useSWR from "swr";
 
-export default function EmployeePage() {
-  const [tableData, setTableData] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/employee");
-      if (!response.ok) {
-        throw new Error("Failed to fetch employee data");
-      }
-      const data = await response.json();
-      setTableData(data);
-    } catch (error) {
-      console.error("Error fetching employee data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  return res.json();
+};
+export default function EmployeeClient({
+  employees: initialEmployees,
+}: {
+  employees: any[];
+}) {
+  const { data } = useSWR("/api/employee", fetcher, {
+    fallbackData: initialEmployees,
+    refreshInterval: 5000,
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  return <EmployeePage employees={data} />;
+}
+
+ function EmployeePage({ employees }: { employees: any }) {
+
   return (
     <MainLayout title="Employee">
-      <EmployeeTable  data={tableData} isLoading={isLoading} />
+      <EmployeeTable  data={employees} isLoading={false} />
     </MainLayout>
   );
 }

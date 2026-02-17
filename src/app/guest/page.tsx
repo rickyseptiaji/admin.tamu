@@ -1,8 +1,7 @@
-import GuestPage from "@/components/features/guest/page";
+import GuestClient from "@/components/features/guest/page";
 
 async function getGuests() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/guest`, {
-    next: { revalidate: 60 },
     cache: "no-store",
   });
 
@@ -11,7 +10,5 @@ async function getGuests() {
 
 export default async function Page() {
   const guests = await getGuests();
-  return (
-    <GuestPage guests={guests} />
-  )
+  return <GuestClient guests={guests} />;
 }

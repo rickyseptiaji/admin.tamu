@@ -76,7 +76,7 @@ export default function CreateReqUserForm({ userId }: { userId: string }) {
       });
 
       const data = await res.json();
-      if (!data.ok) {
+      if (!res.ok) {
         toast.error(data.message || "User created failed");
         return;
       }

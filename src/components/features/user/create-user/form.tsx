@@ -70,7 +70,7 @@ export default function CreateUserForm() {
       });
 
       const data = await res.json();
-      if (!data.ok) {
+      if (!res.ok) {
         toast.error(data.message || "User created failed");
         return;
       }

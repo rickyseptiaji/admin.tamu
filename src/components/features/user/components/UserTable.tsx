@@ -70,10 +70,11 @@ import { endOfMonth, format, startOfMonth } from "date-fns";
 import { LoadingSpinner } from "../../shared/LoadingSpinner";
 import { DraggableRow } from "../../shared/data-table";
 
-export function UserTable() {
+export function UserTable({ users }: { users: any[] }) {
   const router = useRouter();
-  const [data, setData] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const data = users;
+  // const [data, setData] = React.useState(users);
+  // const [isLoading, setIsLoading] = React.useState(false);
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -91,27 +92,27 @@ export function UserTable() {
     from: startOfMonth(new Date()),
     to: endOfMonth(new Date()),
   });
-  const fetchData = async () => {
-    if (!dateRange?.from || !dateRange?.to) return;
-    setIsLoading(true);
-    try {
-      const start = dateRange.from.toISOString();
-      const end = dateRange.to.toISOString();
-      const response = await fetch(`/api/user`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch users data");
-      }
-      const data = await response.json();
-      setData(data);
-    } catch (error) {
-      console.error("Error fetching guest data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [dateRange]);
+  // const fetchData = async () => {
+  //   if (!dateRange?.from || !dateRange?.to) return;
+  //   setIsLoading(true);
+  //   try {
+  //     const start = dateRange.from.toISOString();
+  //     const end = dateRange.to.toISOString();
+  //     const response = await fetch(`/api/user`);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch users data");
+  //     }
+  //     const data = await response.json();
+  //     setData(data);
+  //   } catch (error) {
+  //     console.error("Error fetching guest data:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchData();
+  // }, [dateRange]);
 
   const table = useReactTable({
     data: data,
@@ -170,13 +171,13 @@ export function UserTable() {
     router.push("/user/create-user");
   };
 
-  if (isLoading && data.length != null) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  // if (isLoading && data.length != null) {
+  //   return (
+  //     <div className="flex h-full items-center justify-center">
+  //       <LoadingSpinner />
+  //     </div>
+  //   );
+  // }
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">

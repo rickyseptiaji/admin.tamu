@@ -20,6 +20,7 @@ import {
 import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type TableActionsProps = {
   id: string | number;
@@ -51,11 +52,14 @@ export const TableActions = ({
       const res = await fetch(`/api/${deletePath}/${id}`, {
         method: "DELETE",
       });
-
-      if (res.ok) {
-        router.refresh();
-        setOpen(false);
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error);
+        return;
       }
+      setOpen(false);
+      toast.success(data.message);
+      router.refresh();
     } catch (error) {
       console.log("Delete error:", error);
     }

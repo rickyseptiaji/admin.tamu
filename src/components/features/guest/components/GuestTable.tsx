@@ -70,10 +70,11 @@ import { DateRange } from "react-day-picker";
 import { LoadingSpinner } from "../../shared/LoadingSpinner";
 import { DraggableRow } from "../../shared/data-table";
 
-export function GuestTable() {
+export function GuestTable({ guests }: { guests: any[] }) {
   const router = useRouter();
-  const [data, setData] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(false);
+    const data = guests;
+  // const [data, setData] = React.useState([]);
+  // const [isLoading, setIsLoading] = React.useState(false);
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -91,25 +92,25 @@ export function GuestTable() {
     from: startOfMonth(new Date()),
     to: endOfMonth(new Date()),
   });
-  const fetchData = async () => {
-    if (!dateRange?.from || !dateRange?.to) return;
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/guest`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch guest data");
-      }
-      const data = await response.json();
-      setData(data);
-    } catch (error) {
-      console.error("Error fetching guest data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [dateRange]);
+  // const fetchData = async () => {
+  //   if (!dateRange?.from || !dateRange?.to) return;
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch(`/api/guest`);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch guest data");
+  //     }
+  //     const data = await response.json();
+  //     setData(data);
+  //   } catch (error) {
+  //     console.error("Error fetching guest data:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchData();
+  // }, [dateRange]);
   const table = useReactTable({
     data: data,
     columns: guestColumns,
@@ -165,13 +166,13 @@ export function GuestTable() {
     router.push("/guest/create-guest");
   };
 
-  if (isLoading && data.length != null) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  // if (isLoading && data.length != null) {
+  //   return (
+  //     <div className="flex h-full items-center justify-center">
+  //       <LoadingSpinner />
+  //     </div>
+  //   );
+  // }
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">

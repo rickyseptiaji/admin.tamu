@@ -1,9 +1,7 @@
-"use client"
+
 
 import ReqGuestPage from "@/components/features/guest/req/page";
-import { useParams } from "next/navigation";
-
-export default function Page() {
-  const params = useParams();
-  return <ReqGuestPage guestId={params.id as string} />;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return( <ReqGuestPage guestId={id} /> );
 }

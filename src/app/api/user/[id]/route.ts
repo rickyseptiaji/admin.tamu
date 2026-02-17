@@ -64,15 +64,41 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+
+    const batch = adminDB.batch();
+
+    const visitsSnapshot = await adminDB
+      .collection("visits")
+      .where("user_id", "==", id)
+      .get();
+
+    visitsSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+
+    const visitorFeatureRef = adminDB
+      .collection("visitor_features")
+      .doc(id);
+
+    batch.delete(visitorFeatureRef);
+
+    const userRef = adminDB.collection("users").doc(id);
+    batch.delete(userRef);
+
+    await batch.commit();
+
     await adminAuth.deleteUser(id);
-    await adminDB.collection("users").doc(id).delete();
+
     return NextResponse.json(
-      { message: "User deleted successfully" },
-      {
-        status: 200,
-      },
+      { message: "User dan semua relasinya berhasil dihapus" },
+      { status: 200 }
     );
+
   } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: 500 }
+    );
   }
 }

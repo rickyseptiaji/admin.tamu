@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export async function GET(
@@ -70,23 +80,35 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await deleteDoc(doc(db, "guests", id));
+
+    const batch = writeBatch(db);
+
+    const visitsQuery = query(
+      collection(db, "visits"),
+      where("guestId", "==", id),
+    );
+
+    const visitsSnapshot = await getDocs(visitsQuery);
+
+    visitsSnapshot.forEach((docSnap) => {
+      batch.delete(docSnap.ref);
+    });
+    const visitorFeatureRef = doc(db, "visitor_features", id);
+    batch.delete(visitorFeatureRef);
+
+    const guestRef = doc(db, "guests", id);
+    batch.delete(guestRef);
+    await batch.commit();
+
     return NextResponse.json(
-      {
-        message: "Berhasil menghapus guest",
-      },
-      {
-        status: 200,
-      },
+      { message: "Berhasil menghapus guest beserta relasinya" },
+      { status: 200 },
     );
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
-      {
-        message: "Internal server error",
-      },
-      {
-        status: 500,
-      },
+      { message: "Internal server error" },
+      { status: 500 },
     );
   }
 }

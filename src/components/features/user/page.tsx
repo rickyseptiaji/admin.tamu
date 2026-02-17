@@ -1,16 +1,15 @@
 "use client";
 
 import { MainLayout } from "@/layout/mainLayout";
-import React, { useEffect, useState } from "react";
 import { UserTable } from "./components/UserTable";
 
 
-export default function UserPage() {
+export default function UserPage({ users }: { users: any[] }) {
 
   return (
     <>
       <MainLayout title="User">
-        <UserTable/>
+        <UserTable users={users} />
       </MainLayout>
     </>
   );

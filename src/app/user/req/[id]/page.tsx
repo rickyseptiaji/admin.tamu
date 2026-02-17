@@ -1,9 +1,6 @@
-"use client";
-
 import ReqUserPage from "@/components/features/user/req/page";
-import { useParams } from "next/navigation";
 
-export default function Page() {
-  const params = useParams();
-  return <ReqUserPage userId={params.id as string} />;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <ReqUserPage userId={id} />;
 }

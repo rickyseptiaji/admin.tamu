@@ -1,6 +1,5 @@
 import EditPageGuestHistory from "@/components/features/guest/history/edit/page";
 
-
 export default async function Page({
   params,
 }: {

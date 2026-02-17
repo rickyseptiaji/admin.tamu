@@ -1,7 +1,14 @@
-"use client";
-
 import UserPage from "@/components/features/user/page";
 
-export default function Page() {
-  return <UserPage />;
+async function getUsers() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user`, {
+    cache: "no-store",
+  });
+
+  return res.json();
+}
+
+export default async function Page() {
+  const users = await getUsers();
+  return <UserPage users={users} />;
 }

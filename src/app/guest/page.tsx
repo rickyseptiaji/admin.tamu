@@ -1,7 +1,16 @@
 import GuestPage from "@/components/features/guest/page";
 
-export default function Page() {
-    return (
-        <GuestPage/>
-    )
+async function getGuests() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/guest`, {
+    cache: "no-store",
+  });
+
+  return res.json();
+}
+
+export default async function Page() {
+  const guests = await getGuests();
+  return (
+    <GuestPage guests={guests} />
+  )
 }

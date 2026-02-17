@@ -1,3 +1,4 @@
+"use client"
 import { MainLayout } from "@/layout/mainLayout";
 import CreateReqUserForm from "./form";
 

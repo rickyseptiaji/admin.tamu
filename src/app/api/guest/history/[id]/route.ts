@@ -1,6 +1,7 @@
 import { db } from "@/lib/firebase";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -177,6 +178,26 @@ export async function PATCH(
     );
   } catch (error) {
     console.error("Error updating visit data:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    await deleteDoc(doc(db, "visits", id));
+    return NextResponse.json(
+      { message: "Visit deleted successfully" },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error deleting visit:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

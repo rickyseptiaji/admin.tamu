@@ -32,12 +32,10 @@ const FormSchema = z.object({
   fullName: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 characters.",
   }),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
   description: z.string().optional(),
   dataCheckIn: z.date().optional(),
   timeCheckIn: z.string().optional(),

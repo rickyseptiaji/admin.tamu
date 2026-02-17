@@ -1,6 +1,7 @@
 import { db } from "@/lib/firebase";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -173,6 +174,27 @@ export async function PATCH(
     console.error("Error updating visit:", error);
     return NextResponse.json(
       { error: "Failed to update visit" },
+      { status: 500 },
+    );
+  }
+}
+
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    await deleteDoc(doc(db, "visits", id));
+    return NextResponse.json(
+      { message: "Visit deleted successfully" },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error deleting visit:", error);
+    return NextResponse.json(
+      { error: "Failed to delete visit" },
       { status: 500 },
     );
   }

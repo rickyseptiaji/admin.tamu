@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -16,7 +16,7 @@ export async function GET(
         auth: user,
         data: userData,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });
@@ -25,7 +25,7 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -51,7 +51,26 @@ export async function PATCH(
       { message: "User updated successfully" },
       {
         status: 201,
-      }
+      },
+    );
+  } catch (error: any) {
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    await adminAuth.deleteUser(id);
+    await adminDB.collection("users").doc(id).delete();
+    return NextResponse.json(
+      { message: "User deleted successfully" },
+      {
+        status: 200,
+      },
     );
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });

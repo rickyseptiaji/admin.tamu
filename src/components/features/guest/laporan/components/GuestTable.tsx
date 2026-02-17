@@ -103,7 +103,6 @@ export function LaporanGuestTable() {
         throw new Error("Failed to fetch guest data");
       }
       const data = await response.json();
-      console.log("Fetched guest data:", data);
       setData(data);
     } catch (error) {
       console.error("Error fetching guest data:", error);

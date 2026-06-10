@@ -1,6 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-
 export const guestColumns: ColumnDef<any>[] = [
   {
     id: "no",
@@ -30,7 +29,6 @@ export const guestColumns: ColumnDef<any>[] = [
     accessorKey: "phone",
     header: "Phone",
     cell: ({ row }) => row.original.guest?.phone || "-",
-
   },
   {
     accessorKey: "checkIn",
@@ -43,7 +41,7 @@ export const guestColumns: ColumnDef<any>[] = [
       return `${hours.toString().padStart(2, "0")}:${minutes
         .toString()
         .padStart(2, "0")}`;
-    }
+    },
   },
   {
     accessorKey: "duration",
@@ -63,18 +61,23 @@ export const guestColumns: ColumnDef<any>[] = [
         ? row.original.features.totalVisits
         : "-",
   },
-  {
-    header: "Kategori",
-    accessorKey: "category",
-    cell: ({ row }) => {
-      const totalVisits = row.original.features.totalVisits;
-      let kategori = "Tidak ada kunjungan"; 
-      if (totalVisits >= 10) kategori = "Sering";
-      else if (totalVisits >= 5) kategori = "Sedang";
-      else if (totalVisits > 0) kategori = "Jarang";
-      return kategori;
-    }
+{
+  header: "Kategori",
+  accessorKey: "category",
+  cell: ({ row }) => {
+    const visits = row.original.features.totalVisits;
+
+    return visits > 10
+      ? "Tamu Aktif"
+      : visits >= 6
+      ? "Tamu Sering"
+      : visits >= 3
+      ? "Tamu Jarang"
+      : visits >= 1
+      ? "Tamu Baru"
+      : "Tidak ada kunjungan";
   },
+}
   // {
   //   id: "actions",
   //   header: "Actions",

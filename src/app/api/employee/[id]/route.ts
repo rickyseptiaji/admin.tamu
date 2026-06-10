@@ -1,30 +1,38 @@
-import { db } from "@/lib/firebase";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
-import { NextRequest } from "next/server";
+import { adminDB } from "@/lib/firebase-admin";
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+
   try {
-    const docRef = doc(db, "employees", id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
-      return new Response(JSON.stringify({ message: "Employee not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+    const docSnap = await adminDB
+      .collection("employees")
+      .doc(id)
+      .get();
+
+    if (!docSnap.exists) {
+      return Response.json(
+        { message: "Employee not found" },
+        { status: 404 }
+      );
     }
-    return new Response(JSON.stringify({ id: docSnap.id, ...docSnap.data() }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+
+    return Response.json(
+      {
+        id: docSnap.id,
+        ...docSnap.data(),
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ message: "Failed to fetch employee" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return Response.json(
+      {
+        message: "Failed to fetch employee",
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -33,9 +41,18 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+
   try {
     const body = await req.json();
-    const allowedFields = ["fullName", "email", "phone", "address", "division"];
+
+    const allowedFields = [
+      "fullName",
+      "email",
+      "phone",
+      "address",
+      "division",
+    ];
+
     const updatedData: Record<string, any> = {
       updatedAt: new Date(),
     };
@@ -46,23 +63,25 @@ export async function PUT(
       }
     }
 
-    const employeeRef = doc(db, "employees", id);
-    await updateDoc(employeeRef, updatedData);
+    await adminDB
+      .collection("employees")
+      .doc(id)
+      .update(updatedData);
 
-    return new Response(
-      JSON.stringify({ ok: true, message: "Employee updated successfully" }),
+    return Response.json(
       {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+        ok: true,
+        message: "Employee updated successfully",
+      },
+      { status: 200 }
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({ ok: false, message: "Failed to update employee" }),
+    return Response.json(
       {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+        ok: false,
+        message: "Failed to update employee",
+      },
+      { status: 500 }
     );
   }
 }

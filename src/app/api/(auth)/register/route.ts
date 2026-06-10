@@ -1,23 +1,16 @@
-import { auth, db } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "@firebase/auth";
+import { adminAuth, adminDB } from "@/lib/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { doc, setDoc } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
+
+    const user = await adminAuth.createUser({
       email,
-      password
-    );
-    const user = userCredential.user;
-    if (!user) {
-      return new Response(JSON.stringify({ message: "User not found" }), {
-        status: 404,
-      });
-    }
-    await setDoc(doc(db, "users", user.uid), {
+      password,
+    });
+
+    await adminDB.collection("users").doc(user.uid).set({
       userId: user.uid,
       email: user.email,
       role: "admin",
@@ -30,11 +23,11 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        message: "Registration failed, please try again",
-      }),
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        message: error.message,
+      },
       { status: 500 }
     );
   }

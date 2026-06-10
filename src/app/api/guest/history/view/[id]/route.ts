@@ -1,26 +1,23 @@
+import { adminDB } from "@/lib/firebase-admin";
+import { Timestamp } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/firebase";
-import {
-  doc,
-  getDoc,
-  Timestamp,
-} from "firebase/firestore";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params; // visitId
+    const { id } = await params;
 
-    // 🔥 Ambil 1 visit berdasarkan document ID
-    const visitRef = doc(db, "visits", id);
-    const visitSnap = await getDoc(visitRef);
+    const visitSnap = await adminDB
+      .collection("visits")
+      .doc(id)
+      .get();
 
-    if (!visitSnap.exists()) {
+    if (!visitSnap.exists) {
       return NextResponse.json(
         { error: "Visit not found" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -33,13 +30,15 @@ export async function GET(
       duration?: number | null;
     };
 
-    // 👨‍💼 employee
     let employee = null;
+
     if (data.employeeId) {
-      const employeeSnap = await getDoc(
-        doc(db, "employees", data.employeeId),
-      );
-      if (employeeSnap.exists()) {
+      const employeeSnap = await adminDB
+        .collection("employees")
+        .doc(data.employeeId)
+        .get();
+
+      if (employeeSnap.exists) {
         employee = {
           id: employeeSnap.id,
           ...employeeSnap.data(),
@@ -47,13 +46,15 @@ export async function GET(
       }
     }
 
-    // 🧑 guest
     let guest = null;
+
     if (data.guestId) {
-      const guestSnap = await getDoc(
-        doc(db, "guests", data.guestId),
-      );
-      if (guestSnap.exists()) {
+      const guestSnap = await adminDB
+        .collection("guests")
+        .doc(data.guestId)
+        .get();
+
+      if (guestSnap.exists) {
         guest = {
           id: guestSnap.id,
           ...guestSnap.data(),
@@ -71,13 +72,20 @@ export async function GET(
         employee,
         guest,
       },
-      { status: 200 },
+      {
+        status: 200,
+      }
     );
   } catch (error) {
     console.error("Error fetching visit data:", error);
+
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
+      {
+        error: "Internal Server Error",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

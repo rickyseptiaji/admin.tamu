@@ -1,36 +1,26 @@
-import { formatDate } from "@/hooks/formatDate";
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "@firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const q = query(collection(db, "visits"), where("userId", "!=", null));
-    const visitSnapshot = await getDocs(q);
+    const visitSnapshot = await adminDB
+      .collection("visits")
+      .where("userId", "!=", null)
+      .get();
+
     const visitData = await Promise.all(
-      visitSnapshot.docs.map(async (e) => {
-        const data = e.data() as {
-          employeeId?: string;
-          description?: string;
-          userId?: string;
-          checkIn?: any;
-          checkOut?: any;
-          duration?: any;
-          createdAt?: any;
-        };
+      visitSnapshot.docs.map(async (visitDoc) => {
+        const data = visitDoc.data();
 
         let employee = null;
+
         if (data.employeeId) {
-          const employeeRef = doc(db, "employees", data.employeeId);
-          const employeeSnap = await getDoc(employeeRef);
-          if (employeeSnap.exists()) {
+          const employeeSnap = await adminDB
+            .collection("employees")
+            .doc(data.employeeId)
+            .get();
+
+          if (employeeSnap.exists) {
             employee = {
               id: employeeSnap.id,
               ...employeeSnap.data(),
@@ -39,34 +29,46 @@ export async function GET(req: NextRequest) {
         }
 
         let user = null;
+
         if (data.userId) {
-          const userRef = doc(db, "users", data.userId);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
+          const userSnap = await adminDB
+            .collection("users")
+            .doc(data.userId)
+            .get();
+
+          if (userSnap.exists) {
             user = {
               id: userSnap.id,
               ...userSnap.data(),
             };
           }
         }
+
         return {
-          id: e.id,
-          description: data.description,
-          checkIn: data.checkIn,
-          checkOut: data.checkOut,
-          duration: data.duration,
+          id: visitDoc.id,
+          description: data.description ?? null,
+          checkIn: data.checkIn ?? null,
+          checkOut: data.checkOut ?? null,
+          duration: data.duration ?? null,
           employee,
           user,
         };
-      }),
+      })
     );
-    return new NextResponse(JSON.stringify(visitData), {
+
+    return NextResponse.json(visitData, {
       status: 200,
     });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: "failed fetch data" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("Error fetching visits:", error);
+
+    return NextResponse.json(
+      {
+        error: "failed fetch data",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

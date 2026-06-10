@@ -1,112 +1,45 @@
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-  where,
-} from "@firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const q = query(
-      collection(db, "visitor_features"),
-      where("role", "==", "user"),
+    const featureSnap = await adminDB
+      .collection("visitor_features")
+      .where("role", "==", "user")
+      .get();
+
+    const result = await Promise.all(
+      featureSnap.docs.map(async (featureDoc) => {
+        const userId = featureDoc.id;
+
+        const guestSnap = await adminDB
+          .collection("users")
+          .doc(userId)
+          .get();
+
+        return {
+          userId,
+          user: guestSnap.exists
+            ? guestSnap.data()
+            : null,
+          features: featureDoc.data(),
+        };
+      })
     );
-    const featureSnap = await getDocs(q);
-        const result = await Promise.all(
-          featureSnap.docs.map(async (featureDoc) => {
-            const userId = featureDoc.id;
-    
-            const guestSnap = await getDoc(
-              doc(db, "users", userId)
-            );
-    
-            return {
-              userId,
-              user: guestSnap.exists()
-                ? guestSnap.data()
-                : null,
-              features: featureDoc.data(),
-            };
-          })
-        );
-    
-        return NextResponse.json(result, { status: 200 });
-    // const { searchParams } = new URL(req.url);
-    // const start = searchParams.get("start");
-    // const end = searchParams.get("end");
 
-    // if (!start || !end) {
-    //   return new NextResponse(
-    //     JSON.stringify({ error: "Missing start or end date" }),
-    //     { status: 400, headers: { "Content-Type": "application/json" } }
-    //   );
-    // }
-
-    // const startDate = new Date(start);
-    // const endDate = new Date(end);
-
-    // const userSnapshot = await getDocs(collection(db, "users"));
-    // const users = userSnapshot.docs
-    //   .map((doc) => ({
-    //     id: doc.id,
-    //     ...(doc.data() as any),
-    //   }))
-    //   .filter((user) => user.role != "admin");
-
-    // const visitQuery = query(
-    //   collection(db, "visits"),
-    //   where("createdAt", ">=", startDate),
-    //   where("createdAt", "<=", endDate),
-    //   orderBy("createdAt", "desc")
-    // );
-    // const visitSnapshot = await getDocs(visitQuery);
-    // const visits = visitSnapshot.docs.map((doc) => ({
-    //   id: doc.id,
-    //   ...(doc.data() as any),
-    // }));
-
-    // const result = users
-    //   .filter((user) => visits.some((v) => v.userId === user.id))
-    //   .map((user) => {
-    //     const userVisits = visits.filter((v) => v.userId === user.id);
-    //     const visitCount = userVisits.length;
-
-    //     const lastVisit =
-    //       userVisits[0]?.createdAt?.toDate?.() ??
-    //       userVisits[0]?.createdAt ??
-    //       null;
-
-    //     let kategori = "Tidak ada kunjungan";
-    //     if (visitCount >= 10) kategori = "Sering";
-    //     else if (visitCount >= 5) kategori = "Sedang";
-    //     else if (visitCount > 0) kategori = "Jarang";
-
-    //     return {
-    //       id: user.id,
-    //       fullName: user.fullName,
-    //       email: user.email,
-    //       companyName: user.companyName,
-    //       phone: user.phone,
-    //       role: user.role,
-    //       visitCount,
-    //       lastVisit,
-    //       kategori,
-    //     };
-    //   });
-    // return new NextResponse(JSON.stringify(result), {
-    //   status: 200,
-    //   headers: { "Content-Type": "application/json" },
-    // });
+    return NextResponse.json(result, {
+      status: 200,
+    });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return new NextResponse(JSON.stringify({ error: "Failed to fetch data" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+
+    return NextResponse.json(
+      {
+        error: "Failed to fetch data",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

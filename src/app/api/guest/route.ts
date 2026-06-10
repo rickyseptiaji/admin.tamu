@@ -1,41 +1,49 @@
-import { db } from "@/lib/firebase";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc,
-  where,
-} from "@firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const snapshot = await getDocs(collection(db, "guests"));
-    const data = snapshot.docs.map((q) => ({
-      id: q.id,
-      ...q.data(),
+    const snapshot = await adminDB.collection("guests").get();
+
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
     }));
+
     return NextResponse.json(data, {
       status: 200,
     });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: "failed fetch" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "failed fetch",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { fullName, email, phone, companyName } = body;
-    const q = query(collection(db, "guests"), where("phone", "==", phone));
-    const snapshot = await getDocs(q);
+
+    const {
+      fullName,
+      email,
+      phone,
+      companyName,
+    } = body;
+
+    const snapshot = await adminDB
+      .collection("guests")
+      .where("phone", "==", phone)
+      .get();
+
     if (!snapshot.empty) {
       return NextResponse.json(
         {
@@ -46,16 +54,18 @@ export async function POST(req: NextRequest) {
         }
       );
     }
-    const newDocRef = doc(collection(db, "guests"));
-    const guestId = newDocRef.id;
-    await setDoc(newDocRef, {
-      id: guestId,
+
+    const guestRef = adminDB.collection("guests").doc();
+
+    await guestRef.set({
+      id: guestRef.id,
       fullName,
       email,
       phone,
       companyName,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     });
+
     return NextResponse.json(
       {
         message: "Berhasil menambahkan guest",
@@ -65,6 +75,8 @@ export async function POST(req: NextRequest) {
       }
     );
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       {
         message: "Internal server error",
@@ -75,4 +87,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

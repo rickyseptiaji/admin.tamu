@@ -1,109 +1,82 @@
-import { db } from "@/lib/firebase";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  serverTimestamp,
-  setDoc,
-} from "@firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { fullName, email, phone, address, division } = body;
+
     if (!fullName || !email || !phone || !division) {
-      return new Response(
-        JSON.stringify({ message: "All fields are required" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+      return Response.json(
+        { message: "All fields are required" },
+        { status: 400 }
       );
     }
 
-    const docRef = doc(collection(db, "employees"));
-    await setDoc(docRef, {
+    const docRef = adminDB.collection("employees").doc();
+
+    await docRef.set({
       id: docRef.id,
       fullName,
       email,
       phone,
       address,
       division,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     });
 
-    return new Response(
-      JSON.stringify({ message: "Employee created" }),
-      {
-        status: 201,
-        headers: { "Content-Type": "application/json" },
-      }
+    return Response.json(
+      { message: "Employee created" },
+      { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating employee:", error);
-    return new Response(
-      JSON.stringify({ message: "Failed to create employee" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    console.error(error);
+
+    return Response.json(
+      { message: "Failed to create employee" },
+      { status: 500 }
     );
   }
 }
 
 export async function GET() {
   try {
-    const employeesSnapshot = await getDocs(collection(db, "employees"));
-    const employees = employeesSnapshot.docs.map((doc) => {
-      const data = doc.data() as {
-        fullName?: string;
-        email?: string;
-        phone?: string;
-        address?: string;
-        division?: string;
-        [key: string]: any;
-      };
-      return {
-        id: doc.id,
-        fullName: data.fullName || "",
-        email: data.email || "",
-        phone: data.phone || "",
-        address: data.address || "",
-        division: data.division || "",
-      };
-    });
+    const employeesSnapshot =
+      await adminDB.collection("employees").get();
 
-    const divisionsSnapshot = await getDocs(collection(db, "divisions"));
-    const divisions = divisionsSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as { name: string }),
-    }));
+    const divisionsSnapshot =
+      await adminDB.collection("divisions").get();
 
     const divisionMap: Record<string, string> = {};
-    divisions.forEach((division) => {
-      divisionMap[division.id] = division.name;
+
+    divisionsSnapshot.docs.forEach((doc) => {
+      const data = doc.data();
+      divisionMap[doc.id] = data.name;
     });
 
-    const enrichedEmployees = employees.map((emp) => ({
-      ...emp,
-      division: {
-        id: emp.division,
-        name: divisionMap[emp.division] || "Unknown",
-      },
-    }));
-    return new Response(JSON.stringify(enrichedEmployees), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+    const employees = employeesSnapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        id: doc.id,
+        fullName: data.fullName ?? "",
+        email: data.email ?? "",
+        phone: data.phone ?? "",
+        address: data.address ?? "",
+        division: {
+          id: data.division,
+          name: divisionMap[data.division] ?? "Unknown",
+        },
+      };
     });
+
+    return Response.json(employees);
   } catch (error) {
-    console.error("Error fetching employees:", error);
-    return new Response(
-      JSON.stringify({ message: "Failed to fetch employees" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    console.error(error);
+
+    return Response.json(
+      { message: "Failed to fetch employees" },
+      { status: 500 }
     );
   }
 }

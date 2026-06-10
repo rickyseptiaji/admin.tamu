@@ -1,11 +1,5 @@
-import { db } from "@/lib/firebase";
-import {
-  addDoc,
-  collection,
-  doc,
-  serverTimestamp,
-  setDoc,
-} from "@firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
@@ -14,20 +8,23 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+
     const body = await req.json();
     const { employeeId, description } = body;
-    const newDocRef = doc(collection(db, "visits"));
-    const visitId = newDocRef.id;
-    await setDoc(newDocRef, {
-      id: visitId,
+
+    const docRef = adminDB.collection("visits").doc();
+
+    await docRef.set({
+      id: docRef.id,
       userId: id,
       employeeId,
       description,
-      checkIn: serverTimestamp(),
+      checkIn: FieldValue.serverTimestamp(),
       checkOut: null,
       duration: null,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     });
+
     return NextResponse.json(
       {
         message: "Berhasil",
@@ -37,9 +34,11 @@ export async function POST(
       }
     );
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       {
-        message: "Internal Server error",
+        message: "Internal Server Error",
       },
       {
         status: 500,

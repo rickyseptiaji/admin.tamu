@@ -1,22 +1,27 @@
-import { db } from "@/lib/firebase";
-import { doc, getDoc } from "@firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
 import { Timestamp } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
 
-    const visitRef = doc(db, "visits", id);
-    const visitSnap = await getDoc(visitRef);
+    const visitSnap = await adminDB
+      .collection("visits")
+      .doc(id)
+      .get();
 
-    if (!visitSnap.exists()) {
+    if (!visitSnap.exists) {
       return NextResponse.json(
-        { error: "Visit not found" },
-        { status: 404 },
+        {
+          error: "Visit not found",
+        },
+        {
+          status: 404,
+        }
       );
     }
 
@@ -29,13 +34,15 @@ export async function GET(
       duration?: number | null;
     };
 
-
     let employee = null;
+
     if (data.employeeId) {
-      const employeeSnap = await getDoc(
-        doc(db, "employees", data.employeeId),
-      );
-      if (employeeSnap.exists()) {
+      const employeeSnap = await adminDB
+        .collection("employees")
+        .doc(data.employeeId)
+        .get();
+
+      if (employeeSnap.exists) {
         employee = {
           id: employeeSnap.id,
           ...employeeSnap.data(),
@@ -43,13 +50,15 @@ export async function GET(
       }
     }
 
-
     let user = null;
+
     if (data.userId) {
-      const userSnap = await getDoc(
-        doc(db, "users", data.userId),
-      );
-      if (userSnap.exists()) {
+      const userSnap = await adminDB
+        .collection("users")
+        .doc(data.userId)
+        .get();
+
+      if (userSnap.exists) {
         user = {
           id: userSnap.id,
           ...userSnap.data(),
@@ -67,13 +76,20 @@ export async function GET(
         employee,
         user,
       },
-      { status: 200 },
+      {
+        status: 200,
+      }
     );
   } catch (error) {
     console.error("Error fetching visit data:", error);
+
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
+      {
+        error: "Internal Server Error",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

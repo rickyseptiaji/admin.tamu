@@ -1,30 +1,22 @@
+import { adminDB } from "@/lib/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  writeBatch,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const docRef = doc(db, "guests", id);
-    const docSnap = await getDoc(docRef);
 
-    if (!docSnap.exists()) {
+    const docSnap = await adminDB
+      .collection("guests")
+      .doc(id)
+      .get();
+
+    if (!docSnap.exists) {
       return NextResponse.json(
         { message: "Data tidak ditemukan" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -33,82 +25,110 @@ export async function GET(
         id: docSnap.id,
         ...docSnap.data(),
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: 500 }
+    );
   }
 }
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await req.json();
-    const { email, fullName, companyName, phone } = body;
-    const { id } = await params;
-    await updateDoc(doc(db, "guests", id), {
+
+    const {
       email,
       fullName,
       companyName,
       phone,
-    });
+    } = body;
+
+    const { id } = await params;
+
+    await adminDB
+      .collection("guests")
+      .doc(id)
+      .update({
+        email,
+        fullName,
+        companyName,
+        phone,
+      });
+
     return NextResponse.json(
       {
         message: "Berhasil mengubah guest",
       },
       {
-        status: 201,
-      },
+        status: 200,
+      }
     );
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       {
         message: "Internal server error",
       },
       {
         status: 500,
-      },
+      }
     );
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
 
-    const batch = writeBatch(db);
+    const batch = adminDB.batch();
 
-    const visitsQuery = query(
-      collection(db, "visits"),
-      where("guestId", "==", id),
+    const visitsSnapshot = await adminDB
+      .collection("visits")
+      .where("guestId", "==", id)
+      .get();
+
+    visitsSnapshot.forEach((visitDoc) => {
+      batch.delete(visitDoc.ref);
+    });
+
+    batch.delete(
+      adminDB.collection("visitor_features").doc(id)
     );
 
-    const visitsSnapshot = await getDocs(visitsQuery);
+    batch.delete(
+      adminDB.collection("guests").doc(id)
+    );
 
-    visitsSnapshot.forEach((docSnap) => {
-      batch.delete(docSnap.ref);
-    });
-    const visitorFeatureRef = doc(db, "visitor_features", id);
-    batch.delete(visitorFeatureRef);
-
-    const guestRef = doc(db, "guests", id);
-    batch.delete(guestRef);
     await batch.commit();
 
     return NextResponse.json(
-      { message: "Berhasil menghapus guest beserta relasinya" },
-      { status: 200 },
+      {
+        message: "Berhasil menghapus guest beserta relasinya",
+      },
+      {
+        status: 200,
+      }
     );
   } catch (error) {
     console.error(error);
+
     return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
+      {
+        message: "Internal server error",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

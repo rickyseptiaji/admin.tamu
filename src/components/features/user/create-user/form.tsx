@@ -153,6 +153,12 @@ export default function CreateUserForm() {
             </FormItem>
           )}
         />
+
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+}
         {/* <FormField
           control={form.control}
           name="description"
@@ -190,8 +196,3 @@ export default function CreateUserForm() {
             </FormItem>
           )}
         /> */}
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
-  );
-}

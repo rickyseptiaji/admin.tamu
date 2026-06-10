@@ -1,5 +1,5 @@
-import { db } from "@/lib/firebase";
-import { collection, doc, serverTimestamp, setDoc } from "@firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
@@ -8,20 +8,23 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+
     const body = await req.json();
     const { employeeId, description } = body;
-    const newDocRef = doc(collection(db, "visits"));
-    const visitId = newDocRef.id;
-    await setDoc(newDocRef, {
-      id: visitId,
+
+    const visitRef = adminDB.collection("visits").doc();
+
+    await visitRef.set({
+      id: visitRef.id,
       guestId: id,
       employeeId,
       description,
-      checkIn: serverTimestamp(),
+      checkIn: FieldValue.serverTimestamp(),
       checkOut: null,
       duration: null,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     });
+
     return NextResponse.json(
       {
         message: "Berhasil menambahkan req guest",
@@ -31,6 +34,8 @@ export async function POST(
       }
     );
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       {
         message: "Internal server error",

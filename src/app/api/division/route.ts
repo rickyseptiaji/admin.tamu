@@ -1,14 +1,5 @@
-import { db } from "@/lib/firebase";
-import {
-  addDoc,
-  collection,
-  serverTimestamp,
-  getDocs,
-  doc,
-  updateDoc,
-  query,
-  where,
-} from "firebase/firestore";
+import { adminDB } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function POST(req: Request) {
   try {
@@ -16,64 +7,62 @@ export async function POST(req: Request) {
     const { name } = body;
 
     if (!name || typeof name !== "string") {
-      return new Response(
-        JSON.stringify({ message: "Division name is required" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+      return Response.json(
+        { message: "Division name is required" },
+        { status: 400 }
       );
     }
 
-    const docRef = await addDoc(collection(db, "divisions"), {
+    const docRef = await adminDB.collection("divisions").add({
       name,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
       deletedAt: null,
     });
 
-    await updateDoc(docRef, { id: docRef.id });
-    return new Response(
-      JSON.stringify({ message: "Division created", id: docRef.id }),
+    await docRef.update({
+      id: docRef.id,
+    });
+
+    return Response.json(
       {
-        status: 201,
-        headers: { "Content-Type": "application/json" },
-      }
+        message: "Division created",
+        id: docRef.id,
+      },
+      { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating division:", error);
-    return new Response(
-      JSON.stringify({ message: "Failed to create division" }),
+    console.error(error);
+
+    return Response.json(
       {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+        message: "Failed to create division",
+      },
+      { status: 500 }
     );
   }
 }
 
 export async function GET() {
   try {
-    const divisionsQuery = query(
-      collection(db, "divisions"),
-      where("deletedAt", "==", null)
-    );
-    const divisionsSnapshot = await getDocs(divisionsQuery);
-    const divisions = divisionsSnapshot.docs.map((doc) => ({
+    const snapshot = await adminDB
+      .collection("divisions")
+      .where("deletedAt", "==", null)
+      .get();
+
+    const divisions = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    return new Response(JSON.stringify(divisions), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+
+    return Response.json(divisions);
   } catch (error) {
-    console.error("Error fetching divisions:", error);
-    return new Response(
-      JSON.stringify({ message: "Failed to fetch divisions" }),
+    console.error(error);
+
+    return Response.json(
       {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+        message: "Failed to fetch divisions",
+      },
+      { status: 500 }
     );
   }
 }

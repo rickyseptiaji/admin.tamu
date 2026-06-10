@@ -172,6 +172,22 @@ export default function EditUserForm({ data }: { data: any }) {
             </FormItem>
           )}
         />
+
+         {isEditing && <Button type="submit">Submit</Button>}
+          {!isEditing && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditing(true)}
+              className="mb-4"
+            >
+              Edit
+            </Button>
+          )}
+      </form>
+    </Form>
+  );
+}
         {/* <FormField
           control={form.control}
           name="description"
@@ -209,18 +225,3 @@ export default function EditUserForm({ data }: { data: any }) {
             </FormItem>
           )}
         /> */}
-         {isEditing && <Button type="submit">Submit</Button>}
-          {!isEditing && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsEditing(true)}
-              className="mb-4"
-            >
-              Edit
-            </Button>
-          )}
-      </form>
-    </Form>
-  );
-}

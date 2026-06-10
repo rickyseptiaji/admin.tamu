@@ -1,56 +1,67 @@
-import { auth, db } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "@firebase/auth";
+import { adminAuth, adminDB } from "@/lib/firebase-admin";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { doc, getDoc } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const authHeader = req.headers.get("authorization");
 
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-    const userDocRef = doc(db, "users", user.uid);
-    const userDocSnap = await getDoc(userDocRef);
-    if (!userDocSnap.exists()) {
-      return new NextResponse(JSON.stringify({ message: "User not found" }), {
-        status: 404,
-      });
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
-    const userData = userDocSnap.data();
-    if (userData.role !== "admin") {
-      return new NextResponse(
-        JSON.stringify({ message: "Unauthorized access" }),
+    const token = authHeader.replace("Bearer ", "");
+
+    const decodedToken = await adminAuth.verifyIdToken(token);
+
+    const userDoc = await adminDB
+      .collection("users")
+      .doc(decodedToken.uid)
+      .get();
+
+    if (!userDoc.exists) {
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    const userData = userDoc.data();
+
+    if (userData?.role !== "admin") {
+      return NextResponse.json(
+        { message: "Unauthorized access" },
         { status: 403 }
       );
     }
-    const userToken = await userCredential.user.getIdToken();
-    const res = new NextResponse(
-      JSON.stringify({
+
+    const res = NextResponse.json(
+      {
         message: "Login successful",
-        user: {
-          id: user.uid,
-          email: user.email,
-        },
-      }),
+      },
       {
         status: 200,
       }
     );
-    res.cookies.set("auth_token", userToken, {
+
+    res.cookies.set("auth_token", token, {
       httpOnly: true,
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
+
     return res;
-  } catch (error: any) {
-    return new NextResponse(
-      JSON.stringify({ message: "Login failed, please try again" }),
-      { status: 500 }
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message: "Login failed",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

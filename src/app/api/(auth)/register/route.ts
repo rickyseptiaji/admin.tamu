@@ -3,16 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+  const { uid, email } = await req.json();
 
-    const user = await adminAuth.createUser({
-      email,
-      password,
-    });
-
-    await adminDB.collection("users").doc(user.uid).set({
-      userId: user.uid,
-      email: user.email,
+    await adminDB.collection("users").doc(uid).set({
+      userId: uid,
+      email: email,
       role: "admin",
       createdAt: new Date().toISOString(),
     });

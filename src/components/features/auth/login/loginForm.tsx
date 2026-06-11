@@ -20,6 +20,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import useAuthStore from "@/store/auth.store";
 import { LoadingSpinner } from "../../shared/LoadingSpinner";
+import { signInWithEmailAndPassword } from "@firebase/auth";
+import { auth } from "@/lib/firebase";
+
 
 export function LoginForm() {
   const router = useRouter();
@@ -37,10 +40,17 @@ export function LoginForm() {
     const { email, password } = values;
     try {
       setIsLoading(true);
+
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const token = await credential.user.getIdToken();
       const res = await fetch("/api/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ email, password }),
       });

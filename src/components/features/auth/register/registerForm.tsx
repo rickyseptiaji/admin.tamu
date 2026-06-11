@@ -38,12 +38,23 @@ export function RegisterForm() {
     const { email, password } = values;
     try {
       setIsLoading(true);
-      const res = await fetch("/api/register", {
+      const credential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+
+      const user = credential.user;
+
+     const res = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+        }),
       });
       const data = await res.json();
 

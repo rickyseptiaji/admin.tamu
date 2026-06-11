@@ -16,6 +16,7 @@ import {
 import { LayoutDashboard, SquareTerminal, Users } from "lucide-react";
 import { IconInnerShadowTop } from "@tabler/icons-react";
 import useAuthStore from "@/store/auth.store";
+import { auth } from "@/lib/firebase";
 
 const data = {
   navMain: [
@@ -160,7 +161,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const {user} = useAuthStore();
+   const user = auth.currentUser;
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>

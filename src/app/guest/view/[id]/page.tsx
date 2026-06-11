@@ -17,7 +17,6 @@ async function getHistory(id: string) {
       cache: "no-store",
     },
   );
-
   return res.json();
 }
 export default async function Page({

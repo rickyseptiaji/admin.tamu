@@ -29,7 +29,7 @@ export default function ViewGuestPage({
     data: historyData = [],
     isLoading: historyValidating,
     mutate,
-  } = useSWR(`/api/user/history/${guestId}`, fetcher, {
+  } = useSWR(`/api/guest/history/${guestId}`, fetcher, {
     fallbackData: initialHistory,
   });
   const loading = userValidating || historyValidating;

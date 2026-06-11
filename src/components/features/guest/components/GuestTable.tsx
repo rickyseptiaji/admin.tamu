@@ -250,7 +250,7 @@ export function GuestTable({ guests }: { guests: any[] }) {
               <div className="flex items-center gap-2">
                 <Input
                   placeholder="Search..."
-                  className="w-[220px] rounded-lg bg-background text-sm"
+                  className="w-55 rounded-lg bg-background text-sm"
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
                 />

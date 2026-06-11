@@ -79,10 +79,12 @@ interface TableProps {
 
 interface TableState {
   data: TableProps[];
+  mutate: any
 }
 
-export function VisitorGuestTable({ data  }: TableState) {
+export function VisitorGuestTable({ data, mutate  }: TableState) {
   const [globalFilter, setGlobalFilter] = React.useState("");
+    const columns = visitorGuestColumns(mutate)
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -97,7 +99,7 @@ export function VisitorGuestTable({ data  }: TableState) {
 
   const table = useReactTable({
     data: data,
-    columns: visitorGuestColumns,
+    columns,
     state: {
       sorting,
       columnVisibility,
@@ -189,7 +191,7 @@ export function VisitorGuestTable({ data  }: TableState) {
                       <Button
                         variant="outline"
                         id="date"
-                        className="w-[260px] justify-between rounded-lg border-muted-foreground/30 font-normal hover:bg-accent hover:text-accent-foreground"
+                        className="w-65 justify-between rounded-lg border-muted-foreground/30 font-normal hover:bg-accent hover:text-accent-foreground"
                       >
                         {dateRange?.from ? (
                           dateRange.to ? (
@@ -229,7 +231,7 @@ export function VisitorGuestTable({ data  }: TableState) {
                 <div className="flex items-center gap-2">
                   <Input
                     placeholder="Search..."
-                    className="w-[220px] rounded-lg bg-background text-sm"
+                    className="w-55 rounded-lg bg-background text-sm"
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                   />

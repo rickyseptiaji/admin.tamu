@@ -2,29 +2,23 @@
 import { MainLayout } from "@/layout/mainLayout";
 import { EmployeeTable } from "./components/EmployeeTable";
 import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  return res.json();
-};
 export default function EmployeeClient({
-  employees: initialEmployees,
+  initialEmployee,
 }: {
-  employees: any[];
+  initialEmployee: any[];
 }) {
-  const { data } = useSWR("/api/employee", fetcher, {
-    fallbackData: initialEmployees,
-    refreshInterval: 5000,
+  const {
+    data = [],
+    isLoading,
+    mutate,
+  } = useSWR("/api/employee", fetcher, {
+    fallbackData: initialEmployee,
   });
-
-  return <EmployeePage employees={data} />;
-}
-
- function EmployeePage({ employees }: { employees: any }) {
-
   return (
     <MainLayout title="Employee">
-      <EmployeeTable  data={employees} isLoading={false} />
+      <EmployeeTable  data={data} isLoading={isLoading} mutate={mutate} />
     </MainLayout>
   );
 }

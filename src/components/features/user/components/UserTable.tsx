@@ -59,22 +59,26 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { DateRange } from "react-day-picker";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ChevronDownIcon } from "lucide-react";
 import { endOfMonth, format, startOfMonth } from "date-fns";
-import { LoadingSpinner } from "../../shared/LoadingSpinner";
 import { DraggableRow } from "../../shared/data-table";
+import { LoadingSpinner } from "../../shared/LoadingSpinner";
 
-export function UserTable({ users }: { users: any[] }) {
+interface TableProps {
+  id: string;
+  fullName: string;
+  email: string;
+  companyName: string;
+  phone: string;
+}
+
+interface TableState {
+  data: TableProps[];
+  isLoading: boolean;
+  mutate: any;
+}
+export function UserTable({ data, isLoading, mutate }: TableState) {
   const router = useRouter();
-  const data = users;
-  // const [data, setData] = React.useState(users);
-  // const [isLoading, setIsLoading] = React.useState(false);
+  const columns = userColumns(mutate);
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -116,7 +120,7 @@ export function UserTable({ users }: { users: any[] }) {
 
   const table = useReactTable({
     data: data,
-    columns: userColumns,
+    columns,
     state: {
       sorting,
       columnVisibility,
@@ -171,13 +175,13 @@ export function UserTable({ users }: { users: any[] }) {
     router.push("/user/create-user");
   };
 
-  // if (isLoading && data.length != null) {
-  //   return (
-  //     <div className="flex h-full items-center justify-center">
-  //       <LoadingSpinner />
-  //     </div>
-  //   );
-  // }
+  if (isLoading && data.length != null) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
@@ -255,7 +259,7 @@ export function UserTable({ users }: { users: any[] }) {
               <div className="flex items-center gap-2">
                 <Input
                   placeholder="Search..."
-                  className="w-[220px] rounded-lg bg-background text-sm"
+                  className="w-55 rounded-lg bg-background text-sm"
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
                 />

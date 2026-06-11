@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TableActions } from "../../shared/TableActions";
 
-export const userColumns: ColumnDef<any>[] = [
+export const userColumns = (mutate: any): ColumnDef<any>[] => [
   {
     id: "no",
     header: "No",
@@ -40,6 +40,7 @@ export const userColumns: ColumnDef<any>[] = [
         viewPath="/user/view"
         requestPath="/user/req"
         deletePath="user"
+        mutate={mutate}
       />
     ),
   },

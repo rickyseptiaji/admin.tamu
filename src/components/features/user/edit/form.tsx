@@ -69,13 +69,12 @@ export default function EditUserForm({ data }: { data: any }) {
         },
         body: JSON.stringify(values),
       });
-
       const response = await res.json();
-      if (!response.ok) {
+      if (!res.ok) {
         toast.error(response.message || "User updated failed");
         return;
       }
-      toast.success("User updated successfully");
+      toast.success(response.message || "User updated failed");
       router.push("/user");
     } catch (error) {
       toast.error("Failed to updated user");

@@ -21,6 +21,7 @@ import { MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { KeyedMutator } from "swr";
 
 type TableActionsProps = {
   id: string | number;
@@ -29,6 +30,7 @@ type TableActionsProps = {
   requestPath?: string;
   deletePath?: string;
   printPath?: string;
+ mutate?: KeyedMutator<any>;
 };
 
 export const TableActions = ({
@@ -38,6 +40,7 @@ export const TableActions = ({
   requestPath,
   deletePath,
   printPath,
+  mutate,
 }: TableActionsProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -52,14 +55,18 @@ export const TableActions = ({
       const res = await fetch(`/api/${deletePath}/${id}`, {
         method: "DELETE",
       });
+
       const data = await res.json();
+
       if (!res.ok) {
         toast.error(data.error);
         return;
       }
+
+      await mutate?.();
+
       setOpen(false);
       toast.success(data.message);
-      router.refresh();
     } catch (error) {
       console.log("Delete error:", error);
     }
@@ -118,7 +125,6 @@ export const TableActions = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </>
   );
 };

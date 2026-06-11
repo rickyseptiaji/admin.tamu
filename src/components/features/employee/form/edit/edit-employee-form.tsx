@@ -76,7 +76,7 @@ export default function EditEmployeeForm({
           return;
         }
         setEmployee(data);
-        router.push("/division");
+        router.push("/employee");
         toast.success(data.message);
       } catch (error) {
         toast.error("Failed to update employee");

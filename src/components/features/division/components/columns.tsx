@@ -1,9 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TableActions } from "../../shared/TableActions";
 
-
-export const divisionColums: ColumnDef<any>[] = [
-    {
+export const divisionColums = (mutate: any): ColumnDef<any>[] => [
+  {
     id: "no",
     header: "No",
     cell: ({ row, table }) =>
@@ -27,7 +26,8 @@ export const divisionColums: ColumnDef<any>[] = [
       <TableActions
         id={row.original.id}
         editPath="/division/edit"
-        deletePath="/division"
+        deletePath="division"
+        mutate={mutate}
       />
     ),
   },

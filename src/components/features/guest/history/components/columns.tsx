@@ -2,7 +2,7 @@ import { TableActions } from "@/components/features/shared/TableActions";
 import { formatDate } from "@/hooks/formatDate";
 import { ColumnDef } from "@tanstack/react-table";
 
-export const visitorGuestColumns: ColumnDef<any>[] = [
+export const visitorGuestColumns = (mutate: any): ColumnDef<any>[] => [
   {
     id: "no",
     header: "No",
@@ -66,6 +66,7 @@ export const visitorGuestColumns: ColumnDef<any>[] = [
         id={row.original.id}
         editPath="/guest/history/"
         deletePath="guest/history"
+        mutate={mutate}
       />
     ),
   },

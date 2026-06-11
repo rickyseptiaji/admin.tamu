@@ -73,17 +73,19 @@ interface TableProps {
 interface TableState {
   data: TableProps[];
   isLoading: boolean;
+  mutate: any;
 }
 
-export function EmployeeTable({ data, isLoading }: TableState) {
+export function EmployeeTable({ data, isLoading, mutate }: TableState) {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = employeeColumns(mutate);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
@@ -92,7 +94,7 @@ export function EmployeeTable({ data, isLoading }: TableState) {
 
   const table = useReactTable({
     data: data,
-    columns: employeeColumns,
+    columns,
     state: {
       sorting,
       columnVisibility,
@@ -196,7 +198,7 @@ export function EmployeeTable({ data, isLoading }: TableState) {
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     ))}

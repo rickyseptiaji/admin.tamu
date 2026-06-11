@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TableActions } from "../../shared/TableActions";
 
-export const employeeColumns: ColumnDef<any>[] = [
+export const employeeColumns = (mutate: any) : ColumnDef<any>[] => [
   {
     id: "no",
     header: "No",
@@ -47,6 +47,7 @@ export const employeeColumns: ColumnDef<any>[] = [
         id={row.original.id}
         editPath="/employee/edit"
         deletePath="employee"
+        mutate={mutate}
       />
     ),
   },

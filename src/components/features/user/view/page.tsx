@@ -1,66 +1,51 @@
 "use client";
 
+import useSWR from "swr";
 import { MainLayout } from "@/layout/mainLayout";
 import { LoadingSpinner } from "../../shared/LoadingSpinner";
-import React, { useEffect } from "react";
 import { VisitorUserTable } from "../history/components/VisitorTable";
 import EditUserForm from "../edit/form";
+import { fetcher } from "@/lib/fetcher";
 
+export default function ViewUserPage({
+  userId,
+  initialUser,
+  initialHistory,
+}: {
+  userId: string;
+  initialUser: any;
+  initialHistory: any[];
+}) {
+  const { data: userData, isValidating: userValidating } = useSWR(
+    `/api/user/${userId}`,
+    fetcher,
+    {
+      fallbackData: initialUser,
+    },
+  );
 
-
-export default function ViewUserPage({ userId }: { userId: string }) {
-  const [initialLoading, setInitialLoading] = React.useState(true);
-  const [formData, setFormData] = React.useState<any[]>([]);
-  const [tableData, setTableData] = React.useState<any[]>([]);
-
-  const fetchData = async () => {
-    setInitialLoading(true);
-    try {
-      const response = await fetch(`/api/user/history/${userId}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch users data");
-      }
-      const data = await response.json();
-      setTableData(data);
-    } catch (error) {
-      console.error("Error fetching users data:", error);
-    } finally {
-      setInitialLoading(false);
-    }
-  };
-  const fetchDataUser = async () => {
-    setInitialLoading(true);
-    try {
-      const response = await fetch(`/api/user/${userId}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch users data");
-      }
-      const data = await response.json();
-      setFormData(data);
-    } catch (error) {
-      console.error("Error fetching users data:", error);
-    } finally {
-      setInitialLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-    fetchDataUser();
-  }, [userId]);
+  const {
+    data: historyData = [],
+    isLoading: historyValidating,
+    mutate,
+  } = useSWR(`/api/user/history/${userId}`, fetcher, {
+    fallbackData: initialHistory,
+  });
+  const loading = userValidating || historyValidating;
 
   return (
     <MainLayout title="Detail User">
       <div className="flex items-center justify-center">
         <div className="w-full max-x-md px-4 mx-auto space-y-6">
-          {initialLoading ? (
+          {loading ? (
             <div className="flex h-full items-center justify-center">
               <LoadingSpinner />
             </div>
           ) : (
             <>
-              <EditUserForm data={formData} />
-              <VisitorUserTable data={tableData} />
+              <EditUserForm data={userData} />
+
+              <VisitorUserTable data={historyData} mutate={mutate} />
             </>
           )}
         </div>

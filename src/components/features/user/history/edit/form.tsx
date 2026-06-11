@@ -62,12 +62,22 @@ export default function EditUserHistory({ data }: { data: any }) {
 
   useEffect(() => {
     if (data) {
-      const checkIn = data.checkIn
-        ? new Date(data.checkIn.seconds * 1000)
-        : undefined;
-      const checkOut = data.checkOut
-        ? new Date(data.checkOut.seconds * 1000)
-        : undefined;
+      const firestoreToDate = (timestamp: any) => {
+        if (!timestamp) return undefined;
+
+        if (timestamp._seconds) {
+          return new Date(timestamp._seconds * 1000);
+        }
+
+        if (timestamp.seconds) {
+          return new Date(timestamp.seconds * 1000);
+        }
+
+        return undefined;
+      };
+
+      const checkIn = firestoreToDate(data.checkIn);
+      const checkOut = firestoreToDate(data.checkOut);
       form.reset({
         fullName: data.user.fullName || "",
         email: data.user.email || "",

@@ -21,7 +21,6 @@ export default function GuestClient({
 }
 
 function GuestPage({ guests }: { guests: any }) {
-  console.log("guests ", guests)
   return (
     <>
       <MainLayout title="Guest">

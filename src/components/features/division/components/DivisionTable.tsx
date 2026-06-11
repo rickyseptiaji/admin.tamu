@@ -15,7 +15,7 @@ import {
   type RowSelectionState,
   type PaginationState,
 } from "@tanstack/react-table";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -58,7 +58,6 @@ import { Label } from "@/components/ui/label";
 
 import { useRouter } from "next/navigation";
 import { divisionColums } from "./columns";
-
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "../../shared/LoadingSpinner";
 import { DraggableRow } from "../../shared/data-table";
@@ -70,11 +69,13 @@ interface TableProps {
 interface TableState {
   data: TableProps[];
   isLoading: boolean;
+  mutate: any
 }
 
-export function DivisionTable({ data, isLoading }: TableState) {
+export function DivisionTable({ data, isLoading, mutate }: TableState) {
   const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const columns = divisionColums(mutate);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
@@ -88,7 +89,7 @@ export function DivisionTable({ data, isLoading }: TableState) {
 
   const table = useReactTable({
     data: data,
-    columns: divisionColums,
+    columns,
     state: {
       sorting,
       columnVisibility,

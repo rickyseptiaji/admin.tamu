@@ -1,9 +1,12 @@
 import { adminDB } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 
-export async function PUT(request: Request, { params }: any) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     const body = await request.json();
     const { name } = body;
@@ -14,51 +17,43 @@ export async function PUT(request: Request, { params }: any) {
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
-await adminDB
-  .collection("divisions")
-  .doc(id)
-  .update({
-    name,
-    updatedAt: FieldValue.serverTimestamp(),
-  });
+    await adminDB.collection("divisions").doc(id).update({
+      name,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
     return new Response(
       JSON.stringify({ message: "Division updated successfully" }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({message: "Failed to update division" }),
+      JSON.stringify({ message: "Failed to update division" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 }
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
-  const docSnap = await adminDB
-    .collection("divisions")
-    .doc(id)
-    .get();
+  const docSnap = await adminDB.collection("divisions").doc(id).get();
 
   if (!docSnap.exists) {
-    return Response.json(
-      { message: "Division not found" },
-      { status: 404 }
-    );
+    return Response.json({ message: "Division not found" }, { status: 404 });
   }
 
   return Response.json({
@@ -67,21 +62,18 @@ export async function GET(
   });
 }
 
-export async function DELETE(request: Request, { params }: any) {
-  const id = params.id;
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
 
-await adminDB
-  .collection("divisions")
-  .doc(id)
-  .update({
+  await adminDB.collection("divisions").doc(id).update({
     deletedAt: FieldValue.serverTimestamp(),
   });
 
-  return new Response(
-    JSON.stringify({ message: "Division deleted successfully" }),
-    {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    }
+  return Response.json(
+    { message: "Division deleted successfully" },
+    { status: 200 },
   );
 }

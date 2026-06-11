@@ -1,4 +1,5 @@
 import { adminDB } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function GET(
   req: Request,
@@ -80,6 +81,36 @@ export async function PUT(
       {
         ok: false,
         message: "Failed to update employee",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  try {
+    await adminDB
+      .collection("employees")
+      .doc(id)
+      .delete();
+
+    return Response.json(
+      {
+        ok: true,
+        message: "Employee deleted successfully",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        message: "Failed to delete employee",
       },
       { status: 500 }
     );

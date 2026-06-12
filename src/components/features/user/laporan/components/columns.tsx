@@ -1,3 +1,4 @@
+import { formatDuration } from "@/lib/formatDuration";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const laporanUserColumns: ColumnDef<any>[] = [
@@ -43,15 +44,17 @@ export const laporanUserColumns: ColumnDef<any>[] = [
         .padStart(2, "0")}`;
     },
   },
-  {
-    accessorKey: "duration",
-    header: "Avg Duration (mnt)",
-    cell: ({ row }) =>
-      row.original.features.avgDuration !== null &&
-      row.original.features.avgDuration !== undefined
-        ? row.original.features.avgDuration
-        : "-",
+{
+  accessorKey: "duration",
+  header: "Avg Duration",
+  cell: ({ row }) => {
+  const duration = row.original.features.avgDuration;
+
+    return duration !== null && duration !== undefined
+      ? formatDuration(duration)
+      : "-";
   },
+},
   {
     accessorKey: "totalVisits",
     header: "Total Visits",
